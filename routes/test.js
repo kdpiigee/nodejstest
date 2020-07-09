@@ -10,26 +10,32 @@ router.get('/getjizhu', function (req, res, net) {
 
 
   var mysql = require('mysql')
-  // var connection = mysql.createConnection({
-  //   host: 'localhost',
-  //   user: 'root',
-  //   password: '123456',
-  //   database: 'jiyun'
-  // })
-  //process.env.NODE_MySQL_URI
-  var connection = mysql.createConnection({
-    host: process.env.NODE_MySQL_HOSTNAME,
-    user: process.env.NODE_MySQL_USERNAME,
-    password: process.env.NODE_MySQL_PASSWORD,
-    database: process.env.NODE_MySQL_DATABASE,
-    port:process.env.NODE_MySQL_PORT
-  });
+  var connection = null;
+
+  if (process.env.NODE_DEV == "本机") {
+    connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '123456',
+      database: 'jiyun'
+    });
+  }
+  else {
+    process.env.NODE_MySQL_URI
+    var connection = mysql.createConnection({
+      host: process.env.NODE_MySQL_HOSTNAME,
+      user: process.env.NODE_MySQL_USERNAME,
+      password: process.env.NODE_MySQL_PASSWORD,
+      database: process.env.NODE_MySQL_DATABASE,
+      port: process.env.NODE_MySQL_PORT
+    });
+  }
 
   connection.connect();
 
   connection.query('SELECT * FROM test limit 50', function (err, rows, fields) {
     if (err) throw err
-     res.json(rows);
+    res.json(rows);
     //console.log('The solution is: ', rows[0].solution)
   })
 
@@ -37,9 +43,9 @@ router.get('/getjizhu', function (req, res, net) {
 
 });
 
-router.get('/getprocess',function(req,res,next){
-  var gruntPath=process.env.NODE_MySQL_HOSTNAME;
-  console.log('----',gruntPath);
+router.get('/getprocess', function (req, res, next) {
+  var gruntPath = process.env.NODE_MySQL_HOSTNAME;
+  console.log('----', gruntPath);
   res.json(gruntPath);
 });
 module.exports = router;
