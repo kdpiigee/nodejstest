@@ -29,4 +29,9 @@ router.get('/getjizhu', function (req, res, net) {
 
 });
 
+router.get('/getprocess',function(req,res,next){
+  var gruntPath=process.env.NODE_MySQL_HOSTNAME;
+  console.log('----',gruntPath);
+  res.json(gruntPath);
+});
 module.exports = router;
