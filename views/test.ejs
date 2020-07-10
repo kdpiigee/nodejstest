@@ -34,16 +34,49 @@
                     <a href="#" id="li-chart" class="list-group-item  active">可视化查看</a>
                 </div>
             </div>
+
             <div class="col-md-10">
-                <div id="machine" class="col-md-8">
+                <div id="machine" class="col-md-10">
+                    <div>
+                        <form role="form-inline" >
+                            <div class="form-group">
+
+                                <label for="jizuName">机组名:</label>
+                                <input style="width: 130px;" type="text" id="jizuName">
+                                <label for="jizuURI" style="margin-left: 40px;">机组HOST :</label>
+                                <input style="width: 430px;" type="text" id="jizuURI">
+                                <label for="jizuPort" style="margin-left: 40px;" >端口:</label>
+                                <input style="width: 80px;" type="text" id="jizuPort">
+                            </div>
+                            <div>
+                                <label for="dbName">数据库名:</label>
+                                <input style="width: 150px;" type="text" id="dbName">
+                                <label style="margin-left: 40px;" for="dataStartTime">开始时间:</label>
+                                <input style="width: 150px;" type="datetime" id="dataStartTime">
+                                <label style="margin-left: 40px;" for="dataEndTime">结束时间:</label>
+                                <input style="width: 150px;" type="datetime" id="dataEndTime">
+                            </div>
+
+                            <div style="text-align: right;">
+                                <button type="submit" class="btn btn-default" id="btnDel">删除</button>
+                                <button type="submit" class="btn btn-default" onclick="submitAddRow()" id="btnAdd">添加</button>
+                                <button type="submit" class="btn btn-default" id="btnLoadData">数据迁移</button>
+                            </div>
+
+                        </form>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" id="jizuTable">
                             <caption>机组信息</caption>
                             <thead>
                                 <tr>
-                                    <th>机组</th>
-                                    <th>链接</th>
-                                    <th>配置状态</th>
+                                    <th>机组名</th>
+                                    <th>机组HOST</th>
+                                    <th>机组Port</th>
+                                    <th>数据库名</th>
+                                    <th>数据开始时间</th>
+                                    <th>数据结束时间</th>
+                                    <th>状态</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,7 +141,7 @@
         </div>
     </div>
     <!-- 模态框（Modal） -->
-    <div class="modal fade"  id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width: 350px;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -123,7 +156,7 @@
                         <option value="1">算法1</option>
                         <option value="2">算法2</option>
                         <option value="3">算法3</option>
-                        <option value="4">算法4</option> 
+                        <option value="4">算法4</option>
                     </select>
                 </div>
                 <div class="modal-footer">
