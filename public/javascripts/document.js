@@ -1,38 +1,10 @@
 var gCell;
 $(document).ready(function () {
 
-    $.get("getjizhu", function (result) {
-
-        var xData = new Array();
-        var yData = new Array();
-
-        for (var i = 0; i < result.length; i++) {
-            xData.push(result[i]["COL 1"]);
-            yData.push(result[i]["COL 2"]);
-        }
-
-        var myChart = echarts.init(document.getElementById('chart'));
-        // 指定图表的配置项和数据
-        var option = {
-            xAxis: {
-                type: 'category',
-                data: xData
-            },
-            yAxis: {
-                type: 'value',
-            },
-            series: [{
-                data: yData,
-
-                type: 'line'
-            }]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-    });
-    // 基于准备好的dom，初始化echarts实例
-
+    //机组表格数据初始化
+    initMachineTable();
+    //图表信息初始化
+    initChart();
 
     $("#machine").hide();
     $("#calculation").hide();
@@ -85,7 +57,7 @@ $(document).ready(function () {
 
 });
 
-
+//算法设定事件
 function submitCal() {
     var selText = $("#cal-select option:selected").text();
     gCell.text(selText);
@@ -120,16 +92,69 @@ function submitAddRow() {
         "dbName": dbName,
         "statu": 1
     };
-    
-    // $.post("/addMachine", JSON.stringify(addInfo), function (result) {
-    //     //$("span").html(result);
-    //     console.log('----------result--------'+result);
-    // },'json');
-    console.log("----------"+JSON.stringify(addInfo) )
-    $.post("/addMachine", addInfo,function (result) {
-        //$("span").html(result);
-        console.log('----------result--------'+result);
-    },"json");
+
+    $.post("/addMachine", addInfo, function (result) {
+        console.log('----------result--------' + result);
+    }, "json");
     $("#jizuTable tbody").prepend(row);
 
+};
+//机组表格数据初始化
+function initMachineTable() {
+    $.get("getMachines", function (result) {
+
+
+        for (var i = 0; i < result.length; i++) {
+           
+            var row = "<tr>" +
+                "<td>" + result[i]["name"] + "</td>" +
+                "<td>" + result[i]["host"] + "</td>" +
+                "<td>" + result[i]["port"] + "</td>" +
+                "<td>" + result[i]["dbname"] + "</td>" +
+                "<td>" + result[i]["datastarttime"] + "</td>" +
+                "<td>" + result[i]["dataendtime"] + "</td>" +
+                "<td>" + result[i]["status"] + "</td>" +
+                "</tr>";
+
+            $("#jizuTable tbody").append(row);
+
+        }
+    });
+
+
+};
+//图表数据初始化
+function initChart(){
+
+    $.get("getjizhu", function (result) {
+
+        var xData = new Array();
+        var yData = new Array();
+
+        for (var i = 0; i < result.length; i++) {
+            xData.push(result[i]["COL 1"]);
+            yData.push(result[i]["COL 2"]);
+        }
+
+        var myChart = echarts.init(document.getElementById('chart'));
+        // 指定图表的配置项和数据
+        var option = {
+            xAxis: {
+                type: 'category',
+                data: xData
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [{
+                data: yData,
+
+                type: 'line'
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    });
+    // 基于准备好的dom，初始化echarts实例
 };

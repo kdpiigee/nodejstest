@@ -14,7 +14,6 @@ router.get('/getjizhu', function (req, res, net) {
   conn.query('SELECT * FROM test limit 50', function (err, rows, fields) {
     if (err) throw err
     res.json(rows);
-    //console.log('The solution is: ', rows[0].solution)
   })
 
   util.CloseConn(conn);
