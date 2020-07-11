@@ -12,7 +12,6 @@ $(document).ready(function () {
         }
 
         var myChart = echarts.init(document.getElementById('chart'));
-
         // 指定图表的配置项和数据
         var option = {
             xAxis: {
@@ -82,8 +81,6 @@ $(document).ready(function () {
 
             $('#myModal').modal('show');
         }
-
-
     });
 
 });
@@ -95,14 +92,14 @@ function submitCal() {
     $('#myModal').modal('hide');
 };
 
-
+//机组信息添加按钮点击事件
 function submitAddRow() {
-  var jizuName = $("#jizuName").val();
-  var jizuURI = $("#jizuURI").val();
-  var jizuPort = $("#jizuPort").val();
-  var dataStartTime = $("#dataStartTime").val();
-  var dataEndTime = $("#dataEndTime").val();  
-  var dbName  = $("#dbName").val();  
+    var jizuName = $("#jizuName").val();
+    var jizuURI = $("#jizuURI").val();
+    var jizuPort = $("#jizuPort").val();
+    var dataStartTime = $("#dataStartTime").val();
+    var dataEndTime = $("#dataEndTime").val();
+    var dbName = $("#dbName").val();
     var row = "<tr>" +
         "<td>" + jizuName + "</td>" +
         "<td>" + jizuURI + "</td>" +
@@ -110,10 +107,29 @@ function submitAddRow() {
         "<td>" + dbName + "</td>" +
         "<td>" + dataStartTime + "</td>" +
         "<td>" + dataEndTime + "</td>" +
-        "<td>" + "已配置未导入" + "</td>" +
+        "<td>" + "已配置数据未迁移" + "</td>" +
         "</tr>";
+
+    //添加数据到 table 第一行
+    var addInfo = {
+        "jizuName": jizuName,
+        "jizuURI": jizuURI,
+        "jizuPort": jizuPort,
+        "dataStartTime": dataStartTime,
+        "dataEndTime": dataEndTime,
+        "dbName": dbName,
+        "statu": 1
+    };
     
-    //添加数据到 table 第一行                   
+    // $.post("/addMachine", JSON.stringify(addInfo), function (result) {
+    //     //$("span").html(result);
+    //     console.log('----------result--------'+result);
+    // },'json');
+    console.log("----------"+JSON.stringify(addInfo) )
+    $.post("/addMachine", addInfo,function (result) {
+        //$("span").html(result);
+        console.log('----------result--------'+result);
+    },"json");
     $("#jizuTable tbody").prepend(row);
 
 };
