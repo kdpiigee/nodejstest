@@ -31,7 +31,7 @@ router.get('/getprocess', function (req, res, next) {
 
 router.get('/getMachines', function (req, res, next) {
   var conn = util.GetConn();
-  conn.query('SELECT * FROM machine_master ', function (err, rows, fields) {
+  conn.query('SELECT name ,host,port,dbname,datastarttime,dataendtime,B.statuname as `status` FROM machine_master A,machine_status B where A.`status` = B.id ', function (err, rows, fields) {
     if (err) throw err
     res.json(rows);
   })
