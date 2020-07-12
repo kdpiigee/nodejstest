@@ -6,7 +6,8 @@ exports.GetConn = function () {
             host: 'localhost',
             user: 'root',
             password: '123456',
-            database: 'jiyun'
+            database: 'jiyun',
+            timezone:"SYSTEM"
         });
     }
     else {
@@ -16,7 +17,8 @@ exports.GetConn = function () {
             user: process.env.NODE_MySQL_USERNAME,
             password: process.env.NODE_MySQL_PASSWORD,
             database: process.env.NODE_MySQL_DATABASE,
-            port: process.env.NODE_MySQL_PORT
+            port: process.env.NODE_MySQL_PORT,
+            timezone:"SYSTEM"
         });
     }
     connection.connect();

@@ -105,7 +105,7 @@ function initMachineTable() {
 
 
         for (var i = 0; i < result.length; i++) {
-           
+           console.log("-----time-----"+ result[i]["datastarttime"]);
             var row = "<tr>" +
                 "<td>" + result[i]["name"] + "</td>" +
                 "<td>" + result[i]["host"] + "</td>" +
