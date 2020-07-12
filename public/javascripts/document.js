@@ -5,65 +5,64 @@ $(document).ready(function () {
     initMachineTable();
     //图表信息初始化
     initChart();
+    //算法表格双击表格事件
+    calRowDbClick();
 
+    //左侧边栏点击事件
+    leftPanelClick();
     $("#machine").hide();
     $("#calculation").hide();
     $("#chart").show();
+});
 
-    $("#li-machine").click(function () {
-        $("#left-panal a").removeClass("active"); //移除
-        $(this).addClass("active"); // 追加样式
-        $("#machine").hide();
-        $("#calculation").hide();
-        $("#chart").hide();
-        $("#machine").show();
-
-    });
-
-    $("#li-cal").click(function () {
-        $("#left-panal a").removeClass("active"); //移除
-        $(this).addClass("active"); // 追加样式
-        $("#machine").hide();
-        $("#calculation").hide();
-        $("#chart").hide();
-        $("#calculation").show();
-
-    });
-
-    $("#li-chart").click(function () {
-        $("#left-panal a").removeClass("active"); //移除
-        $(this).addClass("active"); // 追加样式
-        $("#machine").hide();
-        $("#calculation").hide();
-        $("#chart").hide();
-        $("#chart").show();
-
-    });
-
+//算法双击编辑事件
+function calRowDbClick() {
 
     $("#cal-table td").dblclick(function () {
         gCell = $(this)
         var temp = $(this);
-
         var row = $(this).parent().index() + 1; // 行位置
         var col = $(this).index() + 1; // 列位置
-        //alert("当前位置：第"+row+"行，第"+col+"列")
-
         if (col == 2) {
-
             $('#myModal').modal('show');
         }
     });
 
-});
+};
 
+//左侧边栏点击事件
+function leftPanelClick(){
+
+    $("#left-panal a").click(function () {
+        var temp = $(this);
+        console.log("--------left-panal------" + $(this));
+        if ($(this)[0].tagName == "A") {
+            $("#machine").hide();
+            $("#calculation").hide();
+            $("#chart").hide();
+            $("#left-panal a").removeClass("active"); //移除
+            $(this).addClass("active"); // 追加样式
+            var curId = $(this).attr('id');
+            if (curId == "li-machine") {
+                $("#machine").show();
+            } else if (curId == "li-cal") {
+                $("#calculation").show();
+
+            } else if (curId == "li-chart") {
+                $("#chart").show();
+            }
+
+        }
+
+    });
+
+}
 //算法设定事件
 function submitCal() {
     var selText = $("#cal-select option:selected").text();
     gCell.text(selText);
     $('#myModal').modal('hide');
 };
-
 //机组信息添加按钮点击事件
 function submitAddRow() {
     var jizuName = $("#jizuName").val();
@@ -105,7 +104,6 @@ function initMachineTable() {
 
 
         for (var i = 0; i < result.length; i++) {
-           console.log("-----time-----"+ result[i]["datastarttime"]);
             var row = "<tr>" +
                 "<td>" + result[i]["name"] + "</td>" +
                 "<td>" + result[i]["host"] + "</td>" +
@@ -124,7 +122,7 @@ function initMachineTable() {
 
 };
 //图表数据初始化
-function initChart(){
+function initChart() {
 
     $.get("getjizhu", function (result) {
 
