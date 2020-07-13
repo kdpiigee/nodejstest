@@ -13,6 +13,8 @@ $(document).ready(function () {
     $("#machine").hide();
     $("#calculation").hide();
     $("#chart").show();
+    //机组信息输入信息值检查
+    machineInputCheck();
 });
 
 //算法双击编辑事件
@@ -31,7 +33,7 @@ function calRowDbClick() {
 };
 
 //左侧边栏点击事件
-function leftPanelClick(){
+function leftPanelClick() {
 
     $("#left-panal a").click(function () {
         var temp = $(this);
@@ -104,7 +106,7 @@ function initMachineTable() {
 
 
         for (var i = 0; i < result.length; i++) {
-            var row = "<tr>" +
+            var row = "<tr id=" + result[i]["id"] + ">" +
                 "<td>" + result[i]["name"] + "</td>" +
                 "<td>" + result[i]["host"] + "</td>" +
                 "<td>" + result[i]["port"] + "</td>" +
@@ -117,15 +119,23 @@ function initMachineTable() {
             $("#jizuTable tbody").append(row);
 
         }
+
+        // $("#jizuTable tr").hover(function () {
+        //     $(this).children('td').addClass('hover')
+        // }, function () {
+        //     $(this).children('td').removeClass('hover')
+        // });
+
+        $("#jizuTable tr").click(function () {
+            $("#jizuTable td").removeClass('rowselect');
+            $(this).children('td').addClass('rowselect');
+            console.log("------------" + $(this).attr("id"));
+        });
     });
-
-
 };
 //图表数据初始化
 function initChart() {
-
     $.get("getjizhu", function (result) {
-
         var xData = new Array();
         var yData = new Array();
 
@@ -155,4 +165,116 @@ function initChart() {
         myChart.setOption(option);
     });
     // 基于准备好的dom，初始化echarts实例
+};
+
+//机组信息输入信息值检查
+function machineInputCheck() {
+
+    //jizuNameErr
+    //jizuURIErr
+    //jizuPortErr
+    //dbNameErr
+    //dataStartTimeErr
+    //dataEndTimeErr
+    //机组名检查
+    $("#jizuName").on('blur', function () {
+        var str = $('#jizuName').val();
+        var ret = checkSpecialChar(str);
+        if (ret == false) {
+            $("#jizuNameErr").html("机组名含有特殊字符");
+        }
+        if (str.indexOf(" ") != -1) {
+            $("#jizuNameErr").html("机组名含有空格");
+        }
+    });
+    $("#jizuName").on('focus', function () {
+        console.log("获取焦点")
+        $('#jizuNameErr').html("");
+    });
+    //机组HOST检查
+    $("#jizuURI").on('blur', function () {
+        var str = $('#jizuURI').val();
+        var ret = checkIP(str);
+        if (ret == false) {
+            $("#jizuURIErr").html("不是合法的IP地址");
+        }
+    });
+    $("#jizuURI").on('focus', function () {
+        $('#jizuURIErr').html("");
+    });
+    //机组端口号检查
+    $("#jizuPort").on('blur', function () {
+        var str = $('#jizuPort').val();
+        var ret = checkPort(str);
+        if (ret == false) {
+            $("#jizuPortErr").html("不是合法的端口号");
+        }
+    });
+    $("#jizuPort").on('focus', function () {
+        $('#jizuPortErr').html("");
+    });
+    //数据库名字检查
+    $("#dbName").on('blur', function () {
+        var str = $('#dbName').val();
+        var ret = checkSpecialChar(str);
+        if (ret == false) {
+            $("#dbNameErr").html("机组名含有特殊字符");
+        }
+        if (str.indexOf(" ") != -1) {
+            $("#dbNameErr").html("机组名含有k空格");
+        }
+    });
+    $("#dbName").on('focus', function () {
+        $('#dbNameErr').html("");
+    });
+
+    //数据采集开始时间检查
+    $("#dataStartTime").on('blur', function () {
+        if (($('#ipt').val() == '')) {
+            $(".cancle_ico").addClass('hide');
+        } else {
+            $(".cancle_ico").removeClass('hide');
+        }
+    });
+    //数据采集结束时间检查
+    $("#dataEndTime").on('blur', function () {
+        if (($('#ipt').val() == '')) {
+            $(".cancle_ico").addClass('hide');
+        } else {
+            $(".cancle_ico").removeClass('hide');
+        }
+    });
+};
+
+//特殊字符检查
+function checkSpecialChar(val) {
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？%]");
+    var result = val.match(pattern);
+    if (!result) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+//IP地址判断
+function checkIP(ipStr) {
+    //ip地址  
+    var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    var reg = ipStr.match(exp);
+    if (reg == null) {
+        return false;
+    }
+    else {
+        return true
+    }
+};
+
+//端口号判断
+function checkPort(port) {
+    //端口号需为数字 在0-65535之间
+    if (!(/^[1-9]\d*$/.test(port) && 1 <= 1 * port && 1 * port <= 65535)){
+        return false
+    }
+    return true;
 };
