@@ -15,6 +15,8 @@ $(document).ready(function () {
     $("#chart").show();
     //机组信息输入信息值检查
     machineInputCheck();
+    //日期时间选择控件初始化
+    initDateTimeCtr();
 });
 
 //算法双击编辑事件
@@ -37,7 +39,6 @@ function leftPanelClick() {
 
     $("#left-panal a").click(function () {
         var temp = $(this);
-        console.log("--------left-panal------" + $(this));
         if ($(this)[0].tagName == "A") {
             $("#machine").hide();
             $("#calculation").hide();
@@ -67,6 +68,19 @@ function submitCal() {
 };
 //机组信息添加按钮点击事件
 function submitAddRow() {
+    var errFlag = false;
+    $("#machineInputParam input").each(function (i) {
+        var text = $(this).val();
+        if (text == "") {
+            alert("输入项内有空值，请重新输入");
+            errFlag = true
+            return false;
+        }
+    });
+    if (errFlag == true){
+        return;
+    }
+
     var jizuName = $("#jizuName").val();
     var jizuURI = $("#jizuURI").val();
     var jizuPort = $("#jizuPort").val();
@@ -95,10 +109,22 @@ function submitAddRow() {
     };
 
     $.post("/addMachine", addInfo, function (result) {
-        console.log('----------result--------' + result);
+
     }, "json");
     $("#jizuTable tbody").prepend(row);
 
+};
+//机组信息删除按钮点击事件
+function deleteRow() {
+    var temp = $(".rowselect").first().parent()[0].id;
+    
+    if (temp != null){
+        $.post("/delMachine", {temp}, function (result) {
+
+        }, "json");
+
+    }
+    
 };
 //机组表格数据初始化
 function initMachineTable() {
@@ -119,17 +145,9 @@ function initMachineTable() {
             $("#jizuTable tbody").append(row);
 
         }
-
-        // $("#jizuTable tr").hover(function () {
-        //     $(this).children('td').addClass('hover')
-        // }, function () {
-        //     $(this).children('td').removeClass('hover')
-        // });
-
         $("#jizuTable tr").click(function () {
             $("#jizuTable td").removeClass('rowselect');
             $(this).children('td').addClass('rowselect');
-            console.log("------------" + $(this).attr("id"));
         });
     });
 };
@@ -170,12 +188,6 @@ function initChart() {
 //机组信息输入信息值检查
 function machineInputCheck() {
 
-    //jizuNameErr
-    //jizuURIErr
-    //jizuPortErr
-    //dbNameErr
-    //dataStartTimeErr
-    //dataEndTimeErr
     //机组名检查
     $("#jizuName").on('blur', function () {
         var str = $('#jizuName').val();
@@ -188,7 +200,6 @@ function machineInputCheck() {
         }
     });
     $("#jizuName").on('focus', function () {
-        console.log("获取焦点")
         $('#jizuNameErr').html("");
     });
     //机组HOST检查
@@ -227,23 +238,6 @@ function machineInputCheck() {
     $("#dbName").on('focus', function () {
         $('#dbNameErr').html("");
     });
-
-    //数据采集开始时间检查
-    $("#dataStartTime").on('blur', function () {
-        if (($('#ipt').val() == '')) {
-            $(".cancle_ico").addClass('hide');
-        } else {
-            $(".cancle_ico").removeClass('hide');
-        }
-    });
-    //数据采集结束时间检查
-    $("#dataEndTime").on('blur', function () {
-        if (($('#ipt').val() == '')) {
-            $(".cancle_ico").addClass('hide');
-        } else {
-            $(".cancle_ico").removeClass('hide');
-        }
-    });
 };
 
 //特殊字符检查
@@ -259,6 +253,9 @@ function checkSpecialChar(val) {
 
 //IP地址判断
 function checkIP(ipStr) {
+    if (typeof ipStr == "undefined" || ipStr == null || ipStr == "") {
+        return true;
+    }
     //ip地址  
     var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
     var reg = ipStr.match(exp);
@@ -272,9 +269,59 @@ function checkIP(ipStr) {
 
 //端口号判断
 function checkPort(port) {
+    if (typeof port == "undefined" || port == null || port == "") {
+        return true;
+    }
     //端口号需为数字 在0-65535之间
-    if (!(/^[1-9]\d*$/.test(port) && 1 <= 1 * port && 1 * port <= 65535)){
+    if (!(/^[1-9]\d*$/.test(port) && 1 <= 1 * port && 1 * port <= 65535)) {
         return false
+    }
+    return true;
+};
+
+//日期时间选择控件初始化
+function initDateTimeCtr() {
+
+    laydate.render({
+        elem: '#dataStartTime',
+        type: 'datetime',
+        done: function (value, date, endDate) {
+            if (dataTimeCompare(1, value) == false) {
+                $("#dataStartTimeErr").html("数据采集开始时间不能大于数据采集结束时间");
+            }
+        },
+        ready: function (date) {
+            $("#dataStartTimeErr").html("");
+        }
+    });
+
+    laydate.render({
+        elem: '#dataEndTime',
+        type: 'datetime',
+        done: function (value, date, endDate) {
+            if (dataTimeCompare(2, value) == false) {
+                $("#dataStartTimeErr").html("数据采集开始时间不能大于数据采集结束时间");
+            }
+        },
+        ready: function (date) {
+            $("#dataStartTimeErr").html("");
+        }
+    });
+};
+
+function dataTimeCompare(flag, value) {
+    var start;
+    var end;
+    if (flag == 1) {
+        start = value;
+        end = $('#dataEndTime').val();
+    } else if (flag == 2) {
+        start = $('#dataStartTime').val();
+        end = value;
+    }
+    if (new Date(start) > new Date(end)) {
+
+        return false;
     }
     return true;
 };
