@@ -77,7 +77,7 @@ function submitAddRow() {
             return false;
         }
     });
-    if (errFlag == true){
+    if (errFlag == true) {
         return;
     }
 
@@ -87,15 +87,7 @@ function submitAddRow() {
     var dataStartTime = $("#dataStartTime").val();
     var dataEndTime = $("#dataEndTime").val();
     var dbName = $("#dbName").val();
-    var row = "<tr>" +
-        "<td>" + jizuName + "</td>" +
-        "<td>" + jizuURI + "</td>" +
-        "<td>" + jizuPort + "</td>" +
-        "<td>" + dbName + "</td>" +
-        "<td>" + dataStartTime + "</td>" +
-        "<td>" + dataEndTime + "</td>" +
-        "<td>" + "已配置数据未迁移" + "</td>" +
-        "</tr>";
+
 
     //添加数据到 table 第一行
     var addInfo = {
@@ -109,23 +101,59 @@ function submitAddRow() {
     };
 
     $.post("/addMachine", addInfo, function (result) {
-
+        var row = "<tr id=" + result.insertId + ">" +
+            "<td>" + jizuName + "</td>" +
+            "<td>" + jizuURI + "</td>" +
+            "<td>" + jizuPort + "</td>" +
+            "<td>" + dbName + "</td>" +
+            "<td>" + dataStartTime + "</td>" +
+            "<td>" + dataEndTime + "</td>" +
+            "<td>" + "已配置数据未迁移" + "</td>" +
+            "</tr>";
+        $("#jizuTable tbody").prepend(row);
+        $("#jizuTable tr").unbind("click");
+        $("#jizuTable tr").click(function () {
+            $("#jizuTable td").removeClass('rowselect');
+            $(this).children('td').addClass('rowselect');
+        });
     }, "json");
-    $("#jizuTable tbody").prepend(row);
+
 
 };
 //机组信息删除按钮点击事件
 function deleteRow() {
+    if ($(".rowselect").length < 1) {
+        alert("未选择要删除的机组信息");
+        return;
+    }
+    $('#delQuery').modal('show');
+};
+//机组信息删除提示框确实点击事件
+function delMachineOK() {
     var temp = $(".rowselect").first().parent()[0].id;
-    
-    if (temp != null){
-        $.post("/delMachine", {temp}, function (result) {
-
+    if (temp != null) {
+        $.post("/delMachine", { "id": temp }, function (result) {
+            $(".rowselect").first().parent().remove();
         }, "json");
+        $('#delQuery').modal('hide');
+    }
+};
 
+//机组信息数据迁移按钮点击事件
+function machineLoadData() {
+    if ($(".rowselect").length < 1) {
+        alert("未选择要进行数据迁移的机组信息");
+        return;
     }
     
-};
+    var temp = $(".rowselect").first().parent()[0].id;
+    if (temp != null) {
+        $.post("/loadData", { "id": temp }, function (result) {
+            //设定值
+            $(".rowselect").eq(6).text(result);
+        }, "json");
+    }
+}
 //机组表格数据初始化
 function initMachineTable() {
     $.get("getMachines", function (result) {
