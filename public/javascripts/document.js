@@ -101,14 +101,15 @@ function submitAddRow() {
     };
 
     $.post("/addMachine", addInfo, function (result) {
-        var row = "<tr id=" + result.insertId + ">" +
+        console.log("---server-return--" + result.id);
+        var row = "<tr id=" + result.id + ">" +
             "<td>" + jizuName + "</td>" +
             "<td>" + jizuURI + "</td>" +
             "<td>" + jizuPort + "</td>" +
             "<td>" + dbName + "</td>" +
             "<td>" + dataStartTime + "</td>" +
             "<td>" + dataEndTime + "</td>" +
-            "<td>" + "已配置数据未迁移" + "</td>" +
+            "<td>" + "配置完成未取数据" + "</td>" +
             "</tr>";
         $("#jizuTable tbody").prepend(row);
         $("#jizuTable tr").unbind("click");
@@ -130,13 +131,24 @@ function deleteRow() {
 };
 //机组信息删除提示框确实点击事件
 function delMachineOK() {
-    var temp = $(".rowselect").first().parent()[0].id;
-    if (temp != null) {
-        $.post("/delMachine", { "id": temp }, function (result) {
-            $(".rowselect").first().parent().remove();
-        }, "json");
-        $('#delQuery').modal('hide');
+
+    if ($(".rowselect").length > 0) {
+
+        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
+            var temp = $(".rowselect").first().parent()[0].id;
+            if (temp != null) {
+                $.post("/delMachine", { "id": temp }, function (result) {
+                    $(".rowselect").first().parent().remove();
+                }, "json");
+                $('#delQuery').modal('hide');
+            }
+        }
+        else {
+            $('#delQuery').modal('hide');
+            alert("机组当前状态不能进行删除操作");
+        }
     }
+
 };
 
 //机组信息数据迁移按钮点击事件
@@ -145,19 +157,26 @@ function machineLoadData() {
         alert("未选择要进行数据迁移的机组信息");
         return;
     }
-    
-    var temp = $(".rowselect").first().parent()[0].id;
-    if (temp != null) {
-        $.post("/loadData", { "id": temp }, function (result) {
-            //设定值
-            $(".rowselect").eq(6).text(result);
-        }, "json");
+
+    if ($(".rowselect").length > 0) {
+
+        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
+            var temp = $(".rowselect").first().parent()[0].id;
+            if (temp != null) {
+                $.post("/loadData", { "id": temp }, function (result) {
+                    //设定值
+                    $(".rowselect").eq(6).text(result);
+                }, "json");
+            }
+        }
+        else {
+            alert("数据已迁移");
+        }
     }
 }
 //机组表格数据初始化
 function initMachineTable() {
     $.get("getMachines", function (result) {
-
 
         for (var i = 0; i < result.length; i++) {
             var row = "<tr id=" + result[i]["id"] + ">" +
