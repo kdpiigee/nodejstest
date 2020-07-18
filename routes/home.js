@@ -119,7 +119,7 @@ function pushGitRemote(res) {
 
   var cmd = 'pwd';
   process.exec(cmd, function (error, stdout, stderr) {
-    res.JSON(stdout);
+    res.json(stdout);
     console.log("error:" + error);
     console.log("stdout:" + stdout);
     console.log("stderr:" + stderr);
