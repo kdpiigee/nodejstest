@@ -27,8 +27,16 @@ router.get('/getprocess', function (req, res, next) {
   //   res.json(rows);
   // })
   // util.CloseConn(conn);
-  pushGitRemote(res);
+  pushGitRemote1(res);
   //res.json("OK");
+});
+
+router.get('/getprocess1', function (req, res, next) {
+  pushGitRemote2(res);
+});
+
+router.get('/getprocess3', function (req, res, next) {
+  pushGitRemote3(res);
 });
 
 router.get('/getMachines', function (req, res, next) {
@@ -116,9 +124,37 @@ function writeToXml(id) {
 function pushGitRemote() {
 
   var process = require('child_process');
-  var cmd = 'autogit.sh';
+  var cmd = "./autogit.sh";
   process.exec(cmd, function (error, stdout, stderr) {
     
   });
 }
+
+function pushGitRemote3() {
+
+  var process = require('child_process');
+  var cmd = "./autogit.sh";
+  process.exec(cmd, function (error, stdout, stderr) {
+    
+  });
+}
+function pushGitRemote1(res) {
+
+  var process = require('child_process');
+  var cmd = "pws";
+  process.exec(cmd, function (error, stdout, stderr) {
+    res.json("------"+error + "-----"+stdout+"-----"+stderr);
+  });
+}
+
+function pushGitRemote2(res) {
+
+  var process = require('child_process');
+  var cmd = "cp -f public/customxml/text.xml git/configtest/text.xml'";
+  process.exec(cmd, function (error, stdout, stderr) {
+    res.json("------"+error + "-----"+stdout+"-----"+stderr);
+  });
+}
+
+
 module.exports = router;
