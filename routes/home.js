@@ -114,15 +114,14 @@ function writeToXml(id) {
 
 function pushGitRemote(res) {
 
-
-  var process = require('child_process');
-
-  var cmd = 'pwd';
-  process.exec(cmd, function (error, stdout, stderr) {
-    res.json(stdout);
-    console.log("error:" + error);
-    console.log("stdout:" + stdout);
-    console.log("stderr:" + stderr);
-  });
+  // var process = require('child_process');
+  // var cmd = 'pwd';
+  // //cp -f public/customxml/text.xml git/configtest/text.xml
+  // process.exec(cmd, function (error, stdout, stderr) {
+  //   res.json(stdout);
+  //   console.log("error:" + error);
+  //   console.log("stdout:" + stdout);
+  //   console.log("stderr:" + stderr);
+  // });
 }
 module.exports = router;
