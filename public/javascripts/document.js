@@ -127,14 +127,23 @@ function deleteRow() {
         alert("未选择要删除的机组信息");
         return;
     }
-    $('#delQuery').modal('show');
+
+    if ($(".rowselect").length > 0) {
+
+        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
+            $('#delQuery').modal('show');
+        }
+        else {
+            $('#delQuery').modal('hide');
+            alert("机组当前状态不能进行删除操作");
+        }
+    }
+    
 };
 //机组信息删除提示框确实点击事件
 function delMachineOK() {
 
     if ($(".rowselect").length > 0) {
-
-        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
             var temp = $(".rowselect").first().parent()[0].id;
             if (temp != null) {
                 $.post("/delMachine", { "id": temp }, function (result) {
@@ -142,11 +151,8 @@ function delMachineOK() {
                 }, "json");
                 $('#delQuery').modal('hide');
             }
-        }
-        else {
+    
             $('#delQuery').modal('hide');
-            alert("机组当前状态不能进行删除操作");
-        }
     }
 
 };

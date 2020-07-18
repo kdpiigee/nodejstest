@@ -56,12 +56,14 @@ router.post('/loadData', function (req, res) {
   var upSql = "update machine_master set `status` = 2 where id = "+req.body.id;
   //xml写入
   
-  conn.query(upSql, function (err, result) {
+  conn.query(upSql, function (err, rows,result) {
     if (err) throw err
     util.CloseConn(conn);
+    setTimeout(function(){
+      writeToXml(req.body.id);
+    },1000);
     res.json("数据迁移中");
   })
-  
 });
 
 router.post('/addMachine', function (req, res) {
@@ -80,4 +82,31 @@ router.post('/addMachine', function (req, res) {
   });
 });
 
+function writeToXml(id){
+
+  var conn = util.GetConn();
+  var selSql = "select * from  machine_master where id = "+id;
+  //xml写入
+  console.log("----sql------" +selSql);
+  conn.query(selSql, function (err, rows,result) {
+    if (err) throw err
+   
+    console.log("zhelileme "+rows[0]);
+    util.CloseConn(conn);
+
+    const fxp = require("fast-xml-parser");
+    var defaultOptions = {
+      format: true,
+  };
+    const obj2xml = new fxp.j2xParser(defaultOptions).parse(rows[0])
+    var fs = require('fs'); // 引入fs模块
+    fs.writeFile('././public/customxml/text.xml', obj2xml, { 'flag': 'w' }, function(err) {
+      if (err) {
+          throw err;
+      }
+  });
+
+  })
+
+}
 module.exports = router;
