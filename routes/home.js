@@ -21,12 +21,14 @@ router.get('/getjizhu', function (req, res, net) {
 });
 
 router.get('/getprocess', function (req, res, next) {
-  var conn = util.GetConn();
-  conn.query('SELECT * FROM test limit 50', function (err, rows, fields) {
-    if (err) throw err
-    res.json(rows);
-  })
-  util.CloseConn(conn);
+  // var conn = util.GetConn();
+  // conn.query('SELECT * FROM test limit 50', function (err, rows, fields) {
+  //   if (err) throw err
+  //   res.json(rows);
+  // })
+  // util.CloseConn(conn);
+  pushGitRemote(res);
+  //res.json("OK");
 });
 
 router.get('/getMachines', function (req, res, next) {
@@ -39,29 +41,29 @@ router.get('/getMachines', function (req, res, next) {
 });
 
 router.post('/delMachine', function (req, res) {
-  console.log("---------id------"+ req.body.id);
+  console.log("---------id------" + req.body.id);
   var conn = util.GetConn();
-  var delSql = "DELETE from  `machine_master` where id = "+req.body.id;
+  var delSql = "DELETE from  `machine_master` where id = " + req.body.id;
   conn.query(delSql, function (err, result) {
     if (err) throw err
     util.CloseConn(conn);
     res.json("ok");
   })
-  
+
 });
 
 router.post('/loadData', function (req, res) {
 
   var conn = util.GetConn();
-  var upSql = "update machine_master set `status` = 2 where id = "+req.body.id;
+  var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
   //xml写入
-  
-  conn.query(upSql, function (err, rows,result) {
+
+  conn.query(upSql, function (err, rows, result) {
     if (err) throw err
     util.CloseConn(conn);
-    setTimeout(function(){
+    setTimeout(function () {
       writeToXml(req.body.id);
-    },1000);
+    }, 1000);
     res.json("数据迁移中");
   })
 });
@@ -77,36 +79,50 @@ router.post('/addMachine', function (req, res) {
       return;
     }
     util.CloseConn(conn);
-    res.json({id:result.insertId});
-    
+    res.json({ id: result.insertId });
+
   });
 });
 
-function writeToXml(id){
+function writeToXml(id) {
 
   var conn = util.GetConn();
-  var selSql = "select * from  machine_master where id = "+id;
+  var selSql = "select * from  machine_master where id = " + id;
   //xml写入
-  console.log("----sql------" +selSql);
-  conn.query(selSql, function (err, rows,result) {
+  console.log("----sql------" + selSql);
+  conn.query(selSql, function (err, rows, result) {
     if (err) throw err
-   
-    console.log("zhelileme "+rows[0]);
+
+    console.log("zhelileme " + rows[0]);
     util.CloseConn(conn);
 
     const fxp = require("fast-xml-parser");
     var defaultOptions = {
       format: true,
-  };
+    };
     const obj2xml = new fxp.j2xParser(defaultOptions).parse(rows[0])
     var fs = require('fs'); // 引入fs模块
-    fs.writeFile('././public/customxml/text.xml', obj2xml, { 'flag': 'w' }, function(err) {
+    fs.writeFile('././public/customxml/text.xml', obj2xml, { 'flag': 'w' }, function (err) {
       if (err) {
-          throw err;
+        throw err;
       }
-  });
+    });
 
   })
 
+}
+
+function pushGitRemote(res) {
+
+
+  var process = require('child_process');
+
+  var cmd = 'pwd';
+  process.exec(cmd, function (error, stdout, stderr) {
+    res.JSON(stdout);
+    console.log("error:" + error);
+    console.log("stdout:" + stdout);
+    console.log("stderr:" + stderr);
+  });
 }
 module.exports = router;
