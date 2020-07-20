@@ -21,14 +21,9 @@ router.get('/getjizhu', function (req, res, net) {
 });
 
 router.get('/getprocess', function (req, res, next) {
-  // var conn = util.GetConn();
-  // conn.query('SELECT * FROM test limit 50', function (err, rows, fields) {
-  //   if (err) throw err
-  //   res.json(rows);
-  // })
-  // util.CloseConn(conn);
-  pushGitRemote1(res);
-  //res.json("OK");
+
+  pushGitRemote(res);
+
 });
 
 router.get('/getprocess1', function (req, res, next) {
@@ -110,7 +105,7 @@ function writeToXml(id) {
     };
     const obj2xml = new fxp.j2xParser(defaultOptions).parse(rows[0])
     var fs = require('fs'); // 引入fs模块
-    fs.writeFile('././public/customxml/text.xml', obj2xml, { 'flag': 'w' }, function (err) {
+    fs.writeFile('././public/customxml/temp.xml', obj2xml, { 'flag': 'w' }, function (err) {
       if (err) {
         throw err;
       }
@@ -121,40 +116,16 @@ function writeToXml(id) {
 
 }
 
-function pushGitRemote() {
-
+function pushGitRemote(res) {
+  var config = require('./config');
+  
   var process = require('child_process');
-  var cmd = "./autogit.sh";
-  process.exec(cmd, function (error, stdout, stderr) {
-    
-  });
+  var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
+  res.json(cmd);
+  console.log("------------"+cmd);
+  // process.exec(cmd, function (error, stdout, stderr) {
+
+  // });
 }
-
-function pushGitRemote3() {
-
-  var process = require('child_process');
-  var cmd = "./autogit.sh";
-  process.exec(cmd, function (error, stdout, stderr) {
-    
-  });
-}
-function pushGitRemote1(res) {
-
-  var process = require('child_process');
-  var cmd = "pws";
-  process.exec(cmd, function (error, stdout, stderr) {
-    res.json("------"+error + "-----"+stdout+"-----"+stderr);
-  });
-}
-
-function pushGitRemote2(res) {
-
-  var process = require('child_process');
-  var cmd = "cp -f public/customxml/text.xml git/configtest/text.xml'";
-  process.exec(cmd, function (error, stdout, stderr) {
-    res.json("------"+error + "-----"+stdout+"-----"+stderr);
-  });
-}
-
 
 module.exports = router;
