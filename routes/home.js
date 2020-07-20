@@ -22,17 +22,11 @@ router.get('/getjizhu', function (req, res, net) {
 
 router.get('/getprocess', function (req, res, next) {
 
-  pushGitRemote(res);
+  pushGitRemote1(res);
 
 });
 
-router.get('/getprocess1', function (req, res, next) {
-  pushGitRemote2(res);
-});
 
-router.get('/getprocess3', function (req, res, next) {
-  pushGitRemote3(res);
-});
 
 router.get('/getMachines', function (req, res, next) {
   var conn = util.GetConn();
@@ -116,16 +110,28 @@ function writeToXml(id) {
 
 }
 
-function pushGitRemote(res) {
+function pushGitRemote() {
   var config = require('./config');
   
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  res.json(cmd);
-  console.log("------------"+cmd);
-  // process.exec(cmd, function (error, stdout, stderr) {
 
-  // });
+  console.log("------------"+cmd);
+  process.exec(cmd, function (error, stdout, stderr) {
+
+  });
+}
+
+function pushGitRemote1(res) {
+  var config = require('./config');
+  
+  var process = require('child_process');
+  var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
+  res.json(cmd)
+  console.log("------------"+cmd);
+  process.exec(cmd, function (error, stdout, stderr) {
+    
+  });
 }
 
 module.exports = router;
