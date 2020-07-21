@@ -37,4 +37,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//脚本设置和执行
+var process = require('child_process');
+process.execSync("chmod +x sshgen.sh");
+process.execSync("chmod +x autopush.sh");
+process.execSync("chmod +x clone.sh");
+process.execSync('echo -e "\n" | ./sshgen.sh');
 module.exports = app;

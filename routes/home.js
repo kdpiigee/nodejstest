@@ -112,25 +112,20 @@ function writeToXml(id) {
 
 function pushGitRemote() {
   var config = require('./config');
-  
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-
-  console.log("------------"+cmd);
+  process.execSync('"yes\n" | ./clone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
-
   });
 }
 
 function pushGitRemote1(res) {
   var config = require('./config');
-  
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  res.json(cmd)
-  console.log("------------"+cmd);
+  process.execSync('"yes\n" | ./clone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
-    
+    res.json(cmd)
   });
 }
 
