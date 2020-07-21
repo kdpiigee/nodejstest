@@ -114,7 +114,7 @@ function pushGitRemote() {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('"yes\n" | ./clone.sh');
+  process.execSync('echo "yes\n" | ./clone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
   });
 }
@@ -123,7 +123,7 @@ function pushGitRemote1(res) {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('"yes\n" | ./clone.sh');
+  process.execSync('echo "yes\n" | ./clone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
     res.json(cmd)
   });
