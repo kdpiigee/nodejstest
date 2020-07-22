@@ -1,4 +1,6 @@
 #!/bin/bash
+git config --global user.email "809330447@qq.com"
+git config --global user.name "809330447@qq.com"
 addtime=$(date +"%Y-%m-%d %H:%M:%S")
 cd git/$2
 #echo "---pwd---"$(pwd)
