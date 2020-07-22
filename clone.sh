@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/opt/app-root/src/bin/expect
 cd git
-if [ ! -d "configtest" ]; then
- git clone git@github.com:kdpiigee/configtest.git
-fi
-
+rm -rf configtest/
+spawn git clone git@github.com:kdpiigee/configtest.git
+expect "*yes*"
+send "yes\n"
+expect eof

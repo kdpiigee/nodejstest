@@ -114,7 +114,7 @@ function pushGitRemote() {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('echo "yes\n" | ./clone.sh');
+  process.execSync('./clone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
   });
 }
@@ -123,10 +123,21 @@ function pushGitRemote1(res) {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('echo "yes\n" | ./clone.sh');
-  process.exec(cmd, function (error, stdout, stderr) {
-    res.json(cmd)
-  });
+
+  var fs = require("fs") ;
+  var stat = fs.statSync('/opt/app-root/src/git/configtest');
+  var cun= ""
+  if(stat.isDirectory()){
+    cun = "存在的"
+  }else{
+    cun = "不存在"
+  }
+
+  process.execSync('./clone.sh');
+  res.json('ok---'+cun)
+  // process.exec(cmd, function (error, stdout, stderr) {
+  //   res.json(cmd)
+  // });
 }
 
 module.exports = router;

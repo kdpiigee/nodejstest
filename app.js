@@ -42,5 +42,9 @@ var process = require('child_process');
 process.execSync("chmod +x sshgen.sh");
 process.execSync("chmod +x autopush.sh");
 process.execSync("chmod +x clone.sh");
+process.execSync("chmod +x installtool.sh");
+
 process.execSync('echo -e "\n" | ./sshgen.sh');
+process.execSync("./installtool.sh");
+
 module.exports = app;
