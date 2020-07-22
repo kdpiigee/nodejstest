@@ -114,7 +114,7 @@ function pushGitRemote() {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('./clone.sh');
+  process.execSync('./ chkdirclone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
   });
 }
@@ -123,17 +123,8 @@ function pushGitRemote1(res) {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-
-  var fs = require("fs") ;
-  var stat = fs.statSync('/opt/app-root/src/git/configtest');
-  var cun= ""
-  if(stat.isDirectory()){
-    cun = "存在的"
-  }else{
-    cun = "不存在"
-  }
-
-  process.execSync('./clone.sh');
+  process.execSync('./ chkdirclone.sh');
+ 
   res.json('ok---'+cun)
   // process.exec(cmd, function (error, stdout, stderr) {
   //   res.json(cmd)
