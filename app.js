@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var homeRouter = require('./routes/home');
+var gitRouter = require('./routes/gitset');
 
 var app = express();
 
@@ -19,7 +20,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', homeRouter);
-//app.use('/users', usersRouter);
+app.use('/gitset', gitRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -45,7 +46,6 @@ process.execSync("chmod +x clone.sh");
 process.execSync("chmod +x installtool.sh");
 process.execSync("chmod +x chkdirclone.sh");
 
-process.execSync('echo -e "\n" | ./sshgen.sh');
 process.execSync("./installtool.sh");
 
 module.exports = app;
