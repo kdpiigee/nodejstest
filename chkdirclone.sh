@@ -1,4 +1,4 @@
 #!/bin/bash
 if [ ! -d "git/configtest" ]; then
-   ./clone.sh
+   ./clone.sh $1
 fi
