@@ -15,6 +15,20 @@ function genericGitKey(){
 //通过克隆测试GitHub是否已经连通
 function connectGitByClone(){
 
-    alert("btnGitCon git")
-    
+    var sshContent = $("#sshContent").val();
+    var projectName = $("#projectName").val();
+    var configFileName = $("#configFileName").val();
+    var info ={
+        ssh:sshContent,
+        pname:projectName,
+        conname:configFileName
+    }
+
+     $.post("/gitset/congit", info, function (result) {
+         if (result == "ok"){
+            alert("连通测试成功")
+         }else{
+            alert("连通测试失败")
+         }
+    }, "json");    
 }

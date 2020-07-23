@@ -114,8 +114,8 @@ function pushGitRemote() {
   var config = require('./config');
   var process = require('child_process');
   var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('./chkdirclone.sh');
   process.exec(cmd, function (error, stdout, stderr) {
+    
   });
 }
 

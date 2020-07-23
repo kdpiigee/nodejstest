@@ -19,4 +19,18 @@ router.post('/genkey', function (req, res) {
   });
 });
 
+router.post('/congit', function (req, res) {
+
+  var process = require('child_process');
+  process.exec('./chkdirclone.sh '+req.ssh, function (error, stdout, stderr) {
+    var index = stdout.indexOf('done');
+    if (index > 0){
+      res.json("ok");
+    }
+    else{
+      res.json("no");
+    }
+  });
+});
+
 module.exports = router;
