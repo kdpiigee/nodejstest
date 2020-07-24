@@ -123,10 +123,8 @@ function writeToXml(id) {
 }
 
 function pushGitRemote() {
-  var config = require('./config');
   var process = require('child_process');
-  var cmd = "./autopush.sh " + config["gitfilename"] + " " + config["gitdir"];
-  process.exec(cmd, function (error, stdout, stderr) {
+  process.exec("./autopush.sh ", function (error, stdout, stderr) {
 
   });
 }

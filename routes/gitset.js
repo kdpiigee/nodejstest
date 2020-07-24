@@ -6,8 +6,6 @@ const logger4js = logutil.getInstance().getLogger('webservice');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-
-
   res.render('gitset');
 });
 
@@ -27,16 +25,15 @@ router.post('/genkey', function (req, res) {
 router.post('/congit', function (req, res) {
 
   logger4js.info('congit处理开始执行,前端获取数据为--'+req.body.ssh);
+
   var process = require('child_process');
-  process.exec('./chkdirclone.sh '+req.body.ssh, function (error, stdout, stderr) {
-
+  process.exec('./chkdirclone.sh '+req.body.ssh+' '+req.body.pname+' '+req.body.conname+' '+req.body.acc, function (error, stdout, stderr) {
     if(error){
-
       logger4js.info('chkdirclone.sh脚本执行出错--'+error);
     }
     else
     {
-      logger4js.info('chkdirclone.sh脚本执行出错完成--'+stdout);
+      logger4js.info('chkdirclone.sh脚本执行成功--'+stdout);
 
     }    
     var index = stdout.indexOf('done');

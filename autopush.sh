@@ -1,15 +1,19 @@
 #!/bin/bash
-git config --global user.email "809330447@qq.com"
-git config --global user.name "809330447@qq.com"
+pname=$(sed -n 2p git/gitresult.txt)
+filename=$(sed -n 3p git/gitresult.txt)
+acc=$(sed -n 4p git/gitresult.txt)
+
+git config --global user.email ${acc}
+git config --global user.name ${acc}
 addtime=$(date +"%Y-%m-%d %H:%M:%S")
-cd git/$2
+cd git/${pname}
 #echo "---pwd---"$(pwd)
 #echo "git config file push at "$addtime
 git fetch --all
 git reset --hard origin/master
 git pull origin master
-cp -f ../../public/customxml/temp.xml $1
-git add $1
+cp -f ../../public/customxml/temp.xml ${filename}
+git add ${filename}
 git commit -m '"'"push the configfile at ""$addtime"'"'
 git push origin master
 exit 0
