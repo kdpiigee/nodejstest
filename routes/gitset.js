@@ -6,6 +6,8 @@ const logger4js = logutil.getInstance().getLogger('webservice');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+
+
   res.render('gitset');
 });
 

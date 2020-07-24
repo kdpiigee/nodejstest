@@ -6,6 +6,7 @@ $(document).ready(function () {
 
 //生成连接GitHub需要的公钥
 function genericGitKey(){
+    
     var gitac = $("#gitAccount").val();
     $.post("/gitset/genkey", {"ac":gitac}, function (result) {
         $("#keyContent").text(result);  
@@ -26,9 +27,11 @@ function connectGitByClone(){
 
      $.post("/gitset/congit", info, function (result) {
          if (result == "ok"){
-            alert("连通测试成功")
+            alert("连通测试成功");
+            window.location.href ='/';
+            
          }else{
-            alert("连通测试失败")
+            alert("连通测试失败");
          }
     }, "json");    
 }

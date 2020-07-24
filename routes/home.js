@@ -1,10 +1,22 @@
 var express = require('express');
 var router = express.Router();
 var util = require('./dbutils.js');
+var logutil = require('./log4jsutil');
+const logger4js = logutil.getInstance().getLogger('webservice');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('home');
+  var process = require('child_process');
+  process.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
+    logger4js.info('读取gitresult的结构#'+error+"#"+stdout);
+    if(stdout.indexOf("done") > 0){
+      res.render('home');
+    }
+    else
+    {
+      res.render('gitset');
+    }
+  });
 });
 
 router.get('/getjizhu', function (req, res, net) {
@@ -22,7 +34,7 @@ router.get('/getjizhu', function (req, res, net) {
 
 router.get('/getprocess', function (req, res, next) {
 
-  pushGitRemote1(res);
+  //pushGitRemote1(res);
 
 });
 
@@ -113,22 +125,10 @@ function writeToXml(id) {
 function pushGitRemote() {
   var config = require('./config');
   var process = require('child_process');
-  var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
+  var cmd = "./autopush.sh " + config["gitfilename"] + " " + config["gitdir"];
   process.exec(cmd, function (error, stdout, stderr) {
-    
-  });
-}
 
-function pushGitRemote1(res) {
-  var config = require('./config');
-  var process = require('child_process');
-  var cmd = "./autopush.sh " + config["gitfilename"] + " " +config["gitdir"];
-  process.execSync('./chkdirclone.sh');
- 
-  res.json('ok---')
-  // process.exec(cmd, function (error, stdout, stderr) {
-  //   res.json(cmd)
-  // });
+  });
 }
 
 module.exports = router;

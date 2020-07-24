@@ -23,12 +23,12 @@ app.use('/', homeRouter);
 app.use('/gitset', gitRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -38,13 +38,16 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var process = require('child_process');
-process.execSync("chmod +x sshgen.sh");
-process.execSync("chmod +x autopush.sh");
-process.execSync("chmod +x clone.sh");
-process.execSync("chmod +x installtool.sh");
-process.execSync("chmod +x chkdirclone.sh");
-process.execSync("./installtool.sh");
+if (process.env.NODE_DEV != "本机") {
+  var shprocess = require('child_process');
+  shprocess.execSync("chmod +x sshgen.sh");
+  shprocess.execSync("chmod +x autopush.sh");
+  shprocess.execSync("chmod +x clone.sh");
+  shprocess.execSync("chmod +x installtool.sh");
+  shprocess.execSync("chmod +x chkdirclone.sh");
+  shprocess.execSync("./installtool.sh");
+}
+
 
 var logutil = require('./routes/log4jsutil');
 const logger4js = logutil.getInstance().getLogger('webservice');
