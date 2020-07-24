@@ -19,9 +19,9 @@ function connectGitByClone(){
     var projectName = $("#projectName").val();
     var configFileName = $("#configFileName").val();
     var info ={
-        ssh:sshContent,
-        pname:projectName,
-        conname:configFileName
+        "ssh":sshContent,
+        "pname":projectName,
+        "conname":configFileName
     }
 
      $.post("/gitset/congit", info, function (result) {

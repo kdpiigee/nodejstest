@@ -38,14 +38,16 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-//脚本设置和执行
 var process = require('child_process');
 process.execSync("chmod +x sshgen.sh");
 process.execSync("chmod +x autopush.sh");
 process.execSync("chmod +x clone.sh");
 process.execSync("chmod +x installtool.sh");
 process.execSync("chmod +x chkdirclone.sh");
-
 process.execSync("./installtool.sh");
+
+var logutil = require('./routes/log4jsutil');
+const logger4js = logutil.getInstance().getLogger('webservice');
+logger4js.info('tcl和expect安装完成');
 
 module.exports = app;
