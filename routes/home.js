@@ -17,6 +17,7 @@ router.get('/', function (req, res, next) {
       res.render('gitset');
     }
   });
+ // res.render('home');
 });
 
 router.get('/getjizhu', function (req, res, net) {
@@ -109,7 +110,8 @@ function writeToXml(id) {
     var defaultOptions = {
       format: true,
     };
-    const obj2xml = new fxp.j2xParser(defaultOptions).parse(rows[0])
+    var content ={root:rows[0]}
+    const obj2xml = new fxp.j2xParser(defaultOptions).parse(content)
     var fs = require('fs'); // 引入fs模块
     fs.writeFile('././public/customxml/temp.xml', obj2xml, { 'flag': 'w' }, function (err) {
       if (err) {
