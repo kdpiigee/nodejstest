@@ -1,0 +1,11 @@
+<root>
+  <id>24</id>
+  <name>机组12</name>
+  <host>134.54.234.2</host>
+  <port>1223</port>
+  <dbname>data12</dbname>
+  <datastarttime>2020-05-05 00:00:00</datastarttime>
+  <dataendtime>2020-07-29 19:26:58</dataendtime>
+  <modifytime>2020-07-29 19:26:59</modifytime>
+  <status>2</status>
+</root>

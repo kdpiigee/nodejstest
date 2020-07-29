@@ -6,7 +6,17 @@ const logger4js = logutil.getInstance().getLogger('webservice');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('gitset');
+  var execPro = require('child_process');
+  execPro.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
+    logger4js.info('读取gitresult的结构#' + error + "#" + stdout);
+    if (stdout.indexOf("done") > 0) {
+      res.render('home');
+    }
+    else {
+      res.render('gitset');
+    }
+  });
+  //res.render('gitset');
 });
 
 

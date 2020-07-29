@@ -6,18 +6,17 @@ const logger4js = logutil.getInstance().getLogger('webservice');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  var process = require('child_process');
-  process.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
-    logger4js.info('读取gitresult的结构#'+error+"#"+stdout);
-    if(stdout.indexOf("done") > 0){
-      res.render('home');
-    }
-    else
-    {
-      res.render('gitset');
-    }
-  });
- // res.render('home');
+  // var execPro = require('child_process');
+  // execPro.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
+  //   logger4js.info('读取gitresult的结构#' + error + "#" + stdout);
+  //   if (stdout.indexOf("done") > 0) {
+  //     res.render('home');
+  //   }
+  //   else {
+  //     res.render('gitset');
+  //   }
+  // });
+   res.render('home');
 });
 
 router.get('/getjizhu', function (req, res, net) {
@@ -36,6 +35,23 @@ router.get('/getjizhu', function (req, res, net) {
 router.get('/getprocess', function (req, res, next) {
 
   //pushGitRemote1(res);
+
+  var path = require('path'); //系统路径模块
+  var fs = require('fs'); //文件模块
+
+
+  var file = path.join(__dirname, 'config.json'); //文件路径，__dirname为当前运行js文件的目录
+  var modelData = new Object
+  fs.readFile(file, 'utf-8', function (err, data) {
+    if (err) {
+      console.log("-----1111------" + err);
+    } else {
+
+      res.json(data)
+      jsonContent = JSON.parse(data);
+     
+    }
+  });
 
 });
 
@@ -110,7 +126,7 @@ function writeToXml(id) {
     var defaultOptions = {
       format: true,
     };
-    var content ={root:rows[0]}
+    var content = { root: rows[0] }
     const obj2xml = new fxp.j2xParser(defaultOptions).parse(content)
     var fs = require('fs'); // 引入fs模块
     fs.writeFile('././public/customxml/temp.xml', obj2xml, { 'flag': 'w' }, function (err) {

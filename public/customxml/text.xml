@@ -1,9 +1,11 @@
-<id>2</id>
-<name>机组2</name>
-<host>192.168.192.2</host>
-<port>3000</port>
-<dbname>data2</dbname>
-<datastarttime>2020-03-06 12:00:00</datastarttime>
-<dataendtime>2020-03-23 12:00:00</dataendtime>
-<modifytime>2020-07-12 20:01:20</modifytime>
-<status>2</status>
+<root>
+  <id>1</id>
+  <name>机组1</name>
+  <host>192.168.192.1</host>
+  <port>3300</port>
+  <dbname>data1</dbname>
+  <datastarttime>2020-03-06 12:00:00</datastarttime>
+  <dataendtime>2020-03-23 12:00:00</dataendtime>
+  <modifytime>2020-07-11 15:49:22</modifytime>
+  <status>2</status>
+</root>
