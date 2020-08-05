@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var homeRouter = require('./routes/home');
-var gitRouter = require('./routes/gitset');
+//var gitRouter = require('./routes/gitset');
 
 var app = express();
 
@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', homeRouter);
-app.use('/gitset', gitRouter);
+//app.use('/gitset', gitRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -37,20 +37,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-if (process.env.NODE_DEV != "本机") {
-  var shprocess = require('child_process');
-  shprocess.execSync("chmod +x sshgen.sh");
-  shprocess.execSync("chmod +x autopush.sh");
-  shprocess.execSync("chmod +x clone.sh");
-  shprocess.execSync("chmod +x installtool.sh");
-  shprocess.execSync("chmod +x chkdirclone.sh");
-  shprocess.execSync("./installtool.sh");
-}
-
-
-var logutil = require('./routes/log4jsutil');
-const logger4js = logutil.getInstance().getLogger('webservice');
-logger4js.info('tcl和expect安装完成');
 
 module.exports = app;
