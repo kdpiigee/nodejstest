@@ -76,17 +76,13 @@ router.post('/delMachine', function (req, res) {
 });
 
 router.post('/loadData', function (req, loadRes) {
+
+  var stepRets = {
+    select: null,
+    getconfig: null
+  };
   var async = require('async');
   async.series({
-    update: function (done) {
-      var conn = util.GetConn();
-      var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
-      conn.query(upSql, function (err, rows, result) {
-        if (err) throw done("error", err)
-        util.CloseConn(conn);
-        done(null, result);
-      })
-    },
     select: function (done) {
       //逻辑处理
       var conn = util.GetConn();
@@ -96,6 +92,7 @@ router.post('/loadData', function (req, loadRes) {
       conn.query(selSql, function (err, rows, result) {
         if (err) throw err
         util.CloseConn(conn);
+        stepRets.select = rows[0];
         done(null, rows[0]);
       })
     },
@@ -105,26 +102,25 @@ router.post('/loadData', function (req, loadRes) {
       var file = path.join(__dirname, 'config.json'); //文件路径，__dirname为当前运行js文件的目录
       fs.readFile(file, 'utf-8', function (err, data) {
         if (err) {
-          done('err','读取配置文件失败');
+          done('err', '读取配置文件失败');
         } else {
           jsonContent = JSON.parse(data);
-          done(null,jsonContent);
+          stepRets.getconfig = jsonContent;
+          done(null, jsonContent);
         }
       });
-    }
-  }, function (error, result) {
-    if (!error) {
+    },
+    pushconfig: function (done) {
       var jsonData = {
         "type": "machine",
-        "param": result.select
+        "param": stepRets.select
       }
-       
       postdata = JSON.stringify(jsonData); //数据以json格式发送
       logger4js.info('数据迁移Json数据:' + postdata);
       console.log("---------" + postdata);
       var options = {
-        host:  result.getconfig.pythonhost,
-        path: result.getconfig.pythonpath,
+        host: stepRets.getconfig.pythonhost,
+        path: stepRets.getconfig.pythonpath,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,11 +131,22 @@ router.post('/loadData', function (req, loadRes) {
         res.setEncoding('utf8');
         res.on('data', function (data) {
           console.log("data:", data);   //一段html代码
-          loadRes.json("数据迁移中");
+          done(null, data)
         });
       });
       req.write(postdata);
       req.end;
+    }
+  }, function (error, result) {
+    if (!error) {
+
+      var conn = util.GetConn();
+      var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
+      conn.query(upSql, function (err, rows, result) {
+        if (err) throw done("error", err)
+        util.CloseConn(conn);
+        loadRes.json("数据迁移中");
+      });
     }
   });
 
