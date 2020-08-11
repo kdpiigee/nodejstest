@@ -12,6 +12,11 @@
     <script src="javascripts/algorithm.js"></script>
     <script src="javascripts/machine.js"></script>  
     <script src="layui/layui.js"></script>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
 </head>
 
 <style>
@@ -44,7 +49,7 @@
             </div>
 
             <div style="height: 850px;width: 1595px;float:right">
-                <div id="machine" style="background-color: #F2F2F2;padding-top: 15px;height: 850px;padding-left: 5px;width: 1350px;float: left;">
+                <div id="machine" style="background-color: #F2F2F2;padding-top: 15px;height: 850px;padding-left: 5px;width: 1350px;float: left;padding-right: 5px;">
                     <div>
                         <form role="form-inline" id="machineInputParam" style="width: 1300px;">
                             <div>
@@ -86,24 +91,9 @@
 
                         </form>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table" id="jizuTable">
-                            <caption>机组信息</caption>
-                            <thead>
-                                <tr>
-                                    <th>机组名</th>
-                                    <th>机组HOST</th>
-                                    <th>机组Port</th>
-                                    <th>数据库名</th>
-                                    <th>数据开始时间</th>
-                                    <th>数据结束时间</th>
-                                    <th>状态</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                   
+                    <table class="layui-hide" id="jizuTable" lay-filter="test"></table>
+                    
                 </div>
                 <div id="calculation">
                     <div class="col-md-5" style="height: 330px;background-color: #F2F2F2;width: 1300px;margin-bottom: 10px;">

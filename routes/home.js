@@ -22,6 +22,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/getjizhu', function (req, res, net) {
 
+
   var conn = util.GetConn();
 
   conn.query('SELECT * FROM test limit 50', function (err, rows, fields) {
@@ -53,14 +54,54 @@ router.get('/getprocess', function (req, res, next) {
 });
 
 
-
+//机组List数据取得
 router.get('/getMachines', function (req, res, next) {
+
+  var result = req.query; 
+  var pPage = result.page;
+  var pLimit = result.limit;
   var conn = util.GetConn();
-  conn.query("SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status` FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY modifytime desc", function (err, rows, fields) {
-    if (err) throw err
-    res.json(rows);
-  })
-  util.CloseConn(conn);
+  var conn = util.GetConn();
+  var async = require('async');
+  async.series({
+    selectCount: function (done) {
+      var selSql = "select count(1) as count from  machine_master";
+      conn.query(selSql, function (err, rows, result) {
+        if (err) {
+          done('err', err);
+        }
+        done(null, rows);
+      })
+    },
+    selectData: function (done) {
+      var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status` FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
+      if(pPage !== null && pPage !== undefined) {
+        sql="select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`"+ 
+        "FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit "+(pPage-1)*pLimit+","+pLimit;
+      } 
+      conn.query(sql, function (err, rows, fields) {
+        if (err) {
+          done('err', err);
+        }
+        done(null, rows);
+      })
+    }
+  }, function (error, result) {
+    if (!error) {
+      util.CloseConn(conn);
+          var ret = {
+      "code": 0,
+      "msg": "",
+      "count": result.selectCount[0].count,
+      "data": result.selectData
+    }
+    res.json(ret);
+    }
+    else{
+      util.CloseConn(conn);
+      res.json("err");
+    }
+  });
 });
 
 router.post('/delMachine', function (req, res) {
@@ -167,42 +208,5 @@ router.post('/addMachine', function (req, res) {
 
   });
 });
-
-// function writeToXml(id) {
-
-//   var conn = util.GetConn();
-//   var selSql = "select * from  machine_master where id = " + id;
-//   //xml写入
-//   console.log("----sql------" + selSql);
-//   conn.query(selSql, function (err, rows, result) {
-//     if (err) throw err
-
-//     console.log("zhelileme " + rows[0]);
-//     util.CloseConn(conn);
-
-//     const fxp = require("fast-xml-parser");
-//     var defaultOptions = {
-//       format: true,
-//     };
-//     var content = { root: rows[0] }
-//     const obj2xml = new fxp.j2xParser(defaultOptions).parse(content)
-//     var fs = require('fs'); // 引入fs模块
-//     fs.writeFile('././public/customxml/temp.xml', obj2xml, { 'flag': 'w' }, function (err) {
-//       if (err) {
-//         throw err;
-//       }
-//       pushGitRemote();
-//     });
-
-//   })
-
-// }
-
-// function pushGitRemote() {
-//   var process = require('child_process');
-//   process.exec("./autopush.sh ", function (error, stdout, stderr) {
-
-//   });
-// }
 
 module.exports = router;

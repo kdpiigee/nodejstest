@@ -1,5 +1,6 @@
 var gCell;
-
+var gTable;
+var gRowData;
 //算法双击编辑事件
 function calRowDbClick() {
 
@@ -84,35 +85,25 @@ function submitAddRow() {
 
     $.post("/addMachine", addInfo, function (result) {
         console.log("---server-return--" + result.id);
-        var row = "<tr id=" + result.id + ">" +
-            "<td>" + jizuName + "</td>" +
-            "<td>" + jizuURI + "</td>" +
-            "<td>" + jizuPort + "</td>" +
-            "<td>" + dbName + "</td>" +
-            "<td>" + dataStartTime + "</td>" +
-            "<td>" + dataEndTime + "</td>" +
-            "<td>" + "配置完成未取数据" + "</td>" +
-            "</tr>";
-        $("#jizuTable tbody").prepend(row);
-        $("#jizuTable tr").unbind("click");
-        $("#jizuTable tr").click(function () {
-            $("#jizuTable td").removeClass('rowselect');
-            $(this).children('td').addClass('rowselect');
+        gTable.reload('jizuTable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
         });
-    }, "json");
 
+    }, "json");
 
 };
 //机组信息删除按钮点击事件
 function deleteRow() {
-    if ($(".rowselect").length < 1) {
+    if ($('.layui-table-click').length < 1) {
         alert("未选择要删除的机组信息");
         return;
     }
 
-    if ($(".rowselect").length > 0) {
+    if ($('.layui-table-click').length > 0) {
 
-        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
+        if ($('.layui-table-click').eq(0).children('td').eq(6).children('div').text() == "配置完成未取数据") {
             $('#delQuery').modal('show');
         }
         else {
@@ -120,42 +111,40 @@ function deleteRow() {
             alert("机组当前状态不能进行删除操作");
         }
     }
-    
+
 };
 //机组信息删除提示框确实点击事件
 function delMachineOK() {
 
-    if ($(".rowselect").length > 0) {
-            var temp = $(".rowselect").first().parent()[0].id;
-            if (temp != null) {
-                $.post("/delMachine", { "id": temp }, function (result) {
-                    $(".rowselect").first().parent().remove();
-                }, "json");
-                $('#delQuery').modal('hide');
+    var elimit = $('.layui-laypage-limits').eq(0).children('select').find('option:selected').text();
+    var epage = $('.layui-laypage-curr').eq(0).children('em').eq(1).text();
+    elimit
+    $.post("/delMachine", { "id": gRowData.id }, function (result) {
+        gTable.reload('jizuTable', {
+            page: {
+                curr: epage //重新从第 1 页开始
+                ,limit:elimit.substring(0, 2)
             }
-    
-            $('#delQuery').modal('hide');
-    }
+        });
+        $('#delQuery').modal('hide');
+    }, "json");
+    $('#delQuery').modal('hide');
 
 };
 
 //机组信息数据迁移按钮点击事件
 function machineLoadData() {
-    if ($(".rowselect").length < 1) {
+    if ($('.layui-table-click').length < 1) {
         alert("未选择要进行数据迁移的机组信息");
         return;
     }
 
-    if ($(".rowselect").length > 0) {
+    if ($('.layui-table-click').length > 0) {
+        if (gRowData.status == "配置完成未取数据") {
+            $.post("/loadData", { "id": gRowData.id }, function (result) {
 
-        if ($(".rowselect").eq(6).text() == "配置完成未取数据") {
-            var temp = $(".rowselect").first().parent()[0].id;
-            if (temp != null) {
-                $.post("/loadData", { "id": temp }, function (result) {
-                    //设定值
-                    $(".rowselect").eq(6).text(result);
-                }, "json");
-            }
+                $('.layui-table-click').eq(0).children('td').eq(6).children('div').text(result);
+            }, "json");
         }
         else {
             alert("数据已迁移");
@@ -164,25 +153,41 @@ function machineLoadData() {
 }
 //机组表格数据初始化
 function initMachineTable() {
-    $.get("getMachines", function (result) {
+    layui.use('table', function () {
+        var table = layui.table;
 
-        for (var i = 0; i < result.length; i++) {
-            var row = "<tr id=" + result[i]["id"] + ">" +
-                "<td>" + result[i]["name"] + "</td>" +
-                "<td>" + result[i]["host"] + "</td>" +
-                "<td>" + result[i]["port"] + "</td>" +
-                "<td>" + result[i]["dbname"] + "</td>" +
-                "<td>" + result[i]["datastarttime"] + "</td>" +
-                "<td>" + result[i]["dataendtime"] + "</td>" +
-                "<td>" + result[i]["status"] + "</td>" +
-                "</tr>";
+        table.render({
+            elem: '#jizuTable'
+            , url: '/getMachines'
+            , cellMinWidth: 80
+            , height: '600'
+            , limit: 10
+            //,toolbar: '#toolbarDemo'
+            , cols: [[
+                //{type:'radio'}
+                // ,{field:'id',  title: 'ID'}
+                , { field: 'name', title: '机组名',width:200 }
+                , { field: 'host', title: '机组HOST',width:130  }
+                , { field: 'port', title: '机组Port' ,width:130 }
+                , { field: 'dbname', title: '数据库名',width:150  }
+                , { field: 'datastarttime', title: '数据开始时间',width:180  }
+                , { field: 'dataendtime', title: '数据结束时间',width:180  }
+                , { field: 'status', title: '状态',width:200  }
+            ]]
+            , page: true
+        });
 
-            $("#jizuTable tbody").append(row);
-
-        }
-        $("#jizuTable tr").click(function () {
-            $("#jizuTable td").removeClass('rowselect');
-            $(this).children('td').addClass('rowselect');
+        //监听行单击事件
+        table.on('row(test)', function (obj) {
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            gRowData = obj.data;
+        });
+        gTable = table;
+        gTable.reload('jizuTable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+                ,limit:10
+            }
         });
     });
 };
@@ -317,9 +322,8 @@ function checkPort(port) {
 //日期时间选择控件初始化
 function initDateTimeCtr() {
 
-    layui.use('laydate', function(){
+    layui.use('laydate', function () {
         var laydate = layui.laydate;
-
         laydate.render({
             elem: '#dataStartTime',
             type: 'datetime',
@@ -332,7 +336,6 @@ function initDateTimeCtr() {
                 $("#dataStartTimeErr").html("");
             }
         });
-    
         laydate.render({
             elem: '#dataEndTime',
             type: 'datetime',
@@ -346,9 +349,6 @@ function initDateTimeCtr() {
             }
         });
     });
-    
-
-    
 };
 
 function dataTimeCompare(flag, value) {
