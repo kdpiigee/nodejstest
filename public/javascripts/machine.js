@@ -182,7 +182,8 @@ function initMachineTable() {
         });
 
         //监听行单击事件
-        table.on('row(test)', function (obj) {
+        table.on('row(test)', function (obj) {        
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
             obj.tr.css("background-color", "#e5e5e5").siblings().css("background-color", "#FFFFFF");
             gRowData = obj.data;
         });
