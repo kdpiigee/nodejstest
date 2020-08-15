@@ -118,7 +118,11 @@ function delMachineOK() {
 
     var elimit = $('.layui-laypage-limits').eq(0).children('select').find('option:selected').text();
     var epage = $('.layui-laypage-curr').eq(0).children('em').eq(1).text();
-    elimit
+
+    var trs = $("[lay-id=jizuTable]").find('tbody').find('tr').length;
+    if(trs ==1 && epage > 1){
+        epage= epage-1;
+    }
     $.post("/delMachine", { "id": gRowData.id }, function (result) {
         gTable.reload('jizuTable', {
             page: {
@@ -179,7 +183,7 @@ function initMachineTable() {
 
         //监听行单击事件
         table.on('row(test)', function (obj) {
-            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+            obj.tr.css("background-color", "#e5e5e5").siblings().css("background-color", "#FFFFFF");
             gRowData = obj.data;
         });
         gTable = table;
@@ -189,7 +193,9 @@ function initMachineTable() {
                 ,limit:10
             }
         });
+
     });
+    
 };
 //图表数据初始化
 function initChart() {
