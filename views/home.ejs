@@ -10,7 +10,7 @@
     <script src="echarts/echarts.js"></script>
     <script src="javascripts/main.js"></script>
     <script src="javascripts/algorithm.js"></script>
-    <script src="javascripts/machine.js"></script>  
+    <script src="javascripts/machine.js"></script>
     <script src="layui/layui.js"></script>
 
     <meta name="renderer" content="webkit">
@@ -27,9 +27,39 @@
     .rowselect {
         background-color: #009688;
     }
+
+    /* 防止下拉框的下拉列表被隐藏---必须设置--- */
+    .layui-table-cell {
+        overflow: visible !important;
+    }
+
+    /* 使得下拉框与单元格刚好合适 */
+    td .layui-form-select {
+        margin-top: -10px;
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+
+    /*解决下拉框被表格覆盖样式问题*/
+    .layui-form-select dl {
+        z-index: 9999;
+    }
 </style>
 
 <body style="width: 1920px;">
+    <script type="text/html" id="chbAutoUp">
+        <div>
+        <!-- 这里的 checked 的状态只是演示 -->
+    <input type="checkbox" name="isautoupdate" value="{{d.isautoupdate}}" title="开启" lay-filter="lockDemo" {{ d.isautoupdate == 'true' ? 'checked' : '' }} >
+      </div>
+    </script>
+    <script type="text/html" id="selUpInterval">
+    <select name="updateinterval" lay-verify="required">      
+        <option value="0">天</option>
+        <option value="1">周</option>
+        <option value="2">月</option>
+      </select>
+    </script>
     <div class="col-md-12">
 
         <nav class="navbar navbar-default " role="navigation">
@@ -40,7 +70,7 @@
             </div>
         </nav>
         <div style="display: inline;">
-            <div  style="background-color: #F2F2F2;padding-top: 10px;height: 850px;width: 270px;float: left;">
+            <div style="background-color: #F2F2F2;padding-top: 10px;height: 850px;width: 270px;float: left;">
                 <div id="left-panal" class="list-group">
                     <a href="#" id="li-machine" class="list-group-item">机组信息配置管理</a>
                     <a href="#" id="li-cal" class="list-group-item">算法集成配置</a>
@@ -49,7 +79,8 @@
             </div>
 
             <div style="height: 850px;width: 1595px;float:right">
-                <div id="machine" style="background-color: #F2F2F2;padding-top: 15px;height: 850px;padding-left: 5px;width: 1350px;float: left;padding-right: 5px;">
+                <div id="machine"
+                    style="background-color: #F2F2F2;padding-top: 15px;height: 850px;padding-left: 5px;width: 1350px;float: left;padding-right: 5px;">
                     <div>
                         <form role="form-inline" id="machineInputParam" style="width: 1300px;">
                             <div>
@@ -74,6 +105,15 @@
                                 <label style="margin-left: 40px;" for="dataEndTime">结束时间:</label>
                                 <input style="width: 150px;" type="datetime" id="dataEndTime" autocomplete="off"
                                     readonly="readonly">
+                                <label style="margin-left: 40px">开启自动更新<input style="margin-left: 10px;" type="checkbox"
+                                        is="isAutoUpdate" /></label>
+                                <label for="name" style="margin-left: 40px;">更新频率:</label>
+                                <select style="width: 100px;" id="updateInterval">
+                                    <option value="0"></option>
+                                    <option value="1">月</option>
+                                    <option value="2">周</option>
+                                    <option value="3">天</option>
+                                </select>
                             </div>
                             <div>
                                 <label id="dbNameErr" style="color: red;"></label>
@@ -86,17 +126,18 @@
                                 <button type="button" class="btn btn-default" onclick="submitAddRow()"
                                     id="btnAdd">添加</button>
                                 <button type="button" class="btn btn-default" id="btnLoadData"
-                                    onclick="machineLoadData()">数据迁移</button>
+                                    onclick="machineLoadData()">手动更新</button>
                             </div>
 
                         </form>
                     </div>
-                   
+
                     <table class="layui-hide" id="jizuTable" lay-filter="test"></table>
-                    
+
                 </div>
                 <div id="calculation">
-                    <div class="col-md-5" style="height: 330px;background-color: #F2F2F2;width: 1300px;margin-bottom: 10px;">
+                    <div class="col-md-5"
+                        style="height: 330px;background-color: #F2F2F2;width: 1300px;margin-bottom: 10px;">
                         <h4>算法绑定</h4>
                         <div class="table-responsive">
                             <table id="cal-table" class="table">
@@ -120,7 +161,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="col-md-10" style="height: 510px;width: 1300px; background-color: #F2F2F2;" >
+                    <div class="col-md-10" style="height: 510px;width: 1300px; background-color: #F2F2F2;">
                         <h4>算法编辑</h4>
                         <div class="col-md-7" style="height:470px;border-right:1px dashed #000;">
 
@@ -140,8 +181,8 @@
                                         <option value="4">基础算法4</option>
                                     </select>
 
-                                    <button type="button" class="btn btn-default" id="btnAlgDel" style="margin-left: 200px;"
-                                        onclick="algDeleteRow()">添加</button>
+                                    <button type="button" class="btn btn-default" id="btnAlgDel"
+                                        style="margin-left: 200px;" onclick="algDeleteRow()">添加</button>
                                     <button type="button" class="btn btn-default" onclick="algSubmitAddRow()"
                                         id="btnAlgAdd">删除</button>
                                 </div>
@@ -180,17 +221,17 @@
                             </div>
 
                         </div>
-                        <div class="col-md-3 " style="height: 100%" >
+                        <div class="col-md-3 " style="height: 100%">
                             <form role="form-inline" id="algParamForm" style="padding-top: 10px;">
                                 <div>
                                     <label for="algParamName" style="width: 50px;">参数名:</label>
-                                    <input style="width: 80px;" type="text" id="algParamName" autocomplete="off">       
+                                    <input style="width: 80px;" type="text" id="algParamName" autocomplete="off">
                                     <label for="algParamValue" style="width: 50px;margin-left: 10px;">参数值</label>
                                     <input style="width: 80px;" type="text" id="algParamValue" autocomplete="off">
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-default" id="btnAlaParamDel" style="margin-left: 170px;"
-                                        onclick="deleteAlgParamRow()">添加</button>
+                                    <button type="button" class="btn btn-default" id="btnAlaParamDel"
+                                        style="margin-left: 170px;" onclick="deleteAlgParamRow()">添加</button>
                                     <button type="button" class="btn btn-default" onclick="submitAlgParamAddRow()"
                                         id="btnAlaParamAdd">删除</button>
                                 </div>

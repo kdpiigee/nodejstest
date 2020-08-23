@@ -1,4 +1,3 @@
-var gCell;
 var gTable;
 var gRowData;
 //算法双击编辑事件
@@ -157,6 +156,7 @@ function machineLoadData() {
 }
 //机组表格数据初始化
 function initMachineTable() {
+
     layui.use('table', function () {
         var table = layui.table;
 
@@ -169,7 +169,7 @@ function initMachineTable() {
             //,toolbar: '#toolbarDemo'
             , cols: [[
                 //{type:'radio'}
-                // ,{field:'id',  title: 'ID'}
+                ,{field:'id',  title: 'ID',hide:true}
                 , { field: 'name', title: '机组名',width:200 }
                 , { field: 'host', title: '机组HOST',width:130  }
                 , { field: 'port', title: '机组Port' ,width:130 }
@@ -177,6 +177,8 @@ function initMachineTable() {
                 , { field: 'datastarttime', title: '数据开始时间',width:180  }
                 , { field: 'dataendtime', title: '数据结束时间',width:180  }
                 , { field: 'status', title: '状态',width:200  }
+                , { field: 'isautoupdate', title: '自动更新',width:120 , templet: '#chbAutoUp', unresize: true}
+                , { field: 'updateinterval', title: '更新频率',width:120 , templet: '#selUpInterval', unresize: true}
             ]]
             , page: true
         });

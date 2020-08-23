@@ -38,19 +38,22 @@ router.get('/getprocess', function (req, res, next) {
 
   //pushGitRemote1(res);
 
-  var path = require('path'); //系统路径模块
-  var fs = require('fs'); //文件模块
-  var file = path.join(__dirname, 'config.json'); //文件路径，__dirname为当前运行js文件的目录
-  var modelData = new Object
-  fs.readFile(file, 'utf-8', function (err, data) {
-    if (err) {
-    } else {
+  // var path = require('path'); //系统路径模块
+  // var fs = require('fs'); //文件模块
+  // var file = path.join(__dirname, 'config.json'); //文件路径，__dirname为当前运行js文件的目录
+  // var modelData = new Object
+  // fs.readFile(file, 'utf-8', function (err, data) {
+  //   if (err) {
+  //   } else {
 
-      res.json(data)
-      jsonContent = JSON.parse(data);
-    }
-  });
-
+  //     res.json(data)
+  //     jsonContent = JSON.parse(data);
+  //   }
+  // });
+  var dc = require('./datacollection.js')
+  //var ret = dc.singleunit('150817080435211');
+  var ff = dc.historydata('150817080435211','2020-06-19 00:00:00','2020-06-20 00:00:00');
+  res.json("ok")
 });
 
 
@@ -60,7 +63,6 @@ router.get('/getMachines', function (req, res, next) {
   var result = req.query; 
   var pPage = result.page;
   var pLimit = result.limit;
-  var conn = util.GetConn();
   var conn = util.GetConn();
   var async = require('async');
   async.series({
@@ -74,9 +76,9 @@ router.get('/getMachines', function (req, res, next) {
       })
     },
     selectData: function (done) {
-      var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status` FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
+      var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate  FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
       if(pPage !== null && pPage !== undefined) {
-        sql="select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`"+ 
+        sql="select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate "+ 
         "FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit "+(pPage-1)*pLimit+","+pLimit;
       } 
       conn.query(sql, function (err, rows, fields) {
