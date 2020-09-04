@@ -5,6 +5,12 @@ var logutil = require('./log4jsutil');
 var http = require('http');
 const logger4js = logutil.getInstance().getLogger('webservice');
 
+var multer  = require('multer')
+var upload = multer({ dest: 'upload/',
+filename(req,file,cb){
+  cb(null,Date.now() + '-wsgi');
+}});
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
   // var execPro = require('child_process');
@@ -18,6 +24,24 @@ router.get('/', function (req, res, next) {
   //   }
   // });
   res.render('home');
+});
+
+router.post('/upload-single', upload.single('logo'), function(req, res, next){
+  res.send({ret_code: '0'});
+});
+
+router.get('/upload', function (req, res, next) {
+  // var execPro = require('child_process');
+  // execPro.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
+  //   logger4js.info('读取gitresult的结构#' + error + "#" + stdout);
+  //   if (stdout.indexOf("done") > 0) {
+  //     res.render('home');
+  //   }
+  //   else {
+  //     res.render('gitset');
+  //   }
+  // });
+  res.render('upload');
 });
 
 router.get('/getjizhu', function (req, res, net) {
