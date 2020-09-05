@@ -15,15 +15,11 @@ exports.gettoken = function () {
 exports.singleunit = function (jizuid) {
 
     var token = this.gettoken();
-    //var request = require("sync-request");
-
     sgurl = 'http://data.shenguyun.com:8088/sgck-datainterface/v1/positions?' +
         'token=' + token + '&macids=' + jizuid.toString();
     var response = request('get', sgurl).getBody();
-    var data = JSON.parse(response).data;
-    console.log("机组id--" + data[0]['macid'] + "机组名称--" + data[0]['macName']);
-    positons = data[0]['positons'];
-    return positons;
+    var ret = JSON.parse(response).data
+    return ret;
 };
 
 exports.historydata = function (jizuid, starttime, endtime) {
@@ -53,8 +49,8 @@ exports.historydata = function (jizuid, starttime, endtime) {
         for(let i =0;i< returl.length;i++){
             //{"datatime":1592582305680,"gap":-9.420279502868652,"pos_status":4096,"speed":7499}
             returl[i]['formattime'] = moment(parseInt(returl[i]['datatime'])).format('YYYY-MM-DD hh:mm:ss');
-            if(i=2){
-                console.log("------"+JSON.stringify(returl[i]));
+            if(i == 2){
+                console.log("---vibs---"+JSON.stringify(returl[i]));
             }
             retvibs.push(returl[i]);
         }
@@ -72,9 +68,12 @@ exports.historydata = function (jizuid, starttime, endtime) {
             //{"datatime":1592582305680,"gap":-9.420279502868652,"pos_status":4096,"speed":7499}
             returl[i]['formattime'] = moment(parseInt(returl[i]['datatime'])).format('YYYY-MM-DD hh:mm:ss');
             retsps.push(returl[i]);
-            if(i=2){
-                console.log("------"+JSON.stringify(returl[i]));
+            if(i == 2){
+                console.log("--speeds----"+JSON.stringify(returl[i]));
             }
+        }
+        if(sp == '2'){
+            break;
         }
     }
     for (let ss in statics) {
@@ -86,8 +85,8 @@ exports.historydata = function (jizuid, starttime, endtime) {
             returl[i]['formattime'] = moment(parseInt(returl[i]['datatime'])).format('YYYY-MM-DD hh:mm:ss');
             //console.log("------"+JSON.stringify(returl[i]));
             retstatics.push(returl[i]);
-            if(i=2){
-                console.log("------"+JSON.stringify(returl[i]));
+            if(i == 2){
+                console.log("--statics----"+JSON.stringify(returl[i]));
             }
         }
         if(ss == '2'){
@@ -108,13 +107,14 @@ exports.getposdatabyurl = function (token, posid, starttamp, endtamp) {
         'token=' + token + '&posid=' + posid.toString() +
         '&codes=' + '&start=' + starttamp.toString() + '&end=' + endtamp.toString()
 
-
+    console.log("---the-posurl--"+posurl);
     var response = request('get', posurl).getBody();
     console.log("-getposdatabyurl--response---" + response.length);
     if (response.length == 0) {
         return [];
     }
     var data = JSON.parse(response).data;
+    console.log("--the-full-data--" + JSON.parse(response));
     console.log("--length--" + data.length);
     console.log("--getposdatabyurl--" + JSON.stringify(data[0]));
     return data;

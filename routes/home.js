@@ -13,16 +13,6 @@ filename(req,file,cb){
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  // var execPro = require('child_process');
-  // execPro.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
-  //   logger4js.info('读取gitresult的结构#' + error + "#" + stdout);
-  //   if (stdout.indexOf("done") > 0) {
-  //     res.render('home');
-  //   }
-  //   else {
-  //     res.render('gitset');
-  //   }
-  // });
   res.render('home');
 });
 
@@ -31,16 +21,6 @@ router.post('/upload-single', upload.single('logo'), function(req, res, next){
 });
 
 router.get('/upload', function (req, res, next) {
-  // var execPro = require('child_process');
-  // execPro.exec('cat git/gitresult.txt', function (error, stdout, stderr) {
-  //   logger4js.info('读取gitresult的结构#' + error + "#" + stdout);
-  //   if (stdout.indexOf("done") > 0) {
-  //     res.render('home');
-  //   }
-  //   else {
-  //     res.render('gitset');
-  //   }
-  // });
   res.render('upload');
 });
 
@@ -74,9 +54,6 @@ router.get('/getprocess', function (req, res, next) {
   //     jsonContent = JSON.parse(data);
   //   }
   // });
-  var dc = require('./datacollection.js')
-  //var ret = dc.singleunit('150817080435211');
-  var ff = dc.historydata('150817080435211','2020-06-19 00:00:00','2020-06-20 00:00:00');
   res.json("ok")
 });
 
@@ -148,6 +125,14 @@ router.post('/loadData', function (req, loadRes) {
     select: null,
     getconfig: null
   };
+  var dc = require('./datacollection.js');
+  var ret = dc.singleunit(req.body.name)
+  if(ret.length == 0){
+    loadRes.json("err");
+    loadRes.end();
+    return;
+  }
+
   var async = require('async');
   async.series({
     select: function (done) {
@@ -212,7 +197,7 @@ router.post('/loadData', function (req, loadRes) {
       conn.query(upSql, function (err, rows, result) {
         if (err) throw done("error", err)
         util.CloseConn(conn);
-        loadRes.json("数据迁移中");
+        loadRes.json("手动更新中");
       });
     }
   });

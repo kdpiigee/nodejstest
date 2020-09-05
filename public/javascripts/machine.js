@@ -102,7 +102,7 @@ function deleteRow() {
 
     if ($('.layui-table-click').length > 0) {
 
-        if ($('.layui-table-click').eq(0).children('td').eq(6).children('div').text() == "配置完成未取数据") {
+        if ($('.layui-table-click').eq(0).children('td').eq(7).children('div').text() == "配置完成未取数据") {
             $('#delQuery').modal('show');
         }
         else {
@@ -143,10 +143,15 @@ function machineLoadData() {
     }
 
     if ($('.layui-table-click').length > 0) {
-        if (gRowData.status == "配置完成未取数据") {
-            $.post("/loadData", { "id": gRowData.id }, function (result) {
 
-                $('.layui-table-click').eq(0).children('td').eq(6).children('div').text(result);
+        if (gRowData.status == "配置完成未取数据") {
+            $.post("/loadData", { "id": gRowData.id,"name":gRowData.name }, function (result) {
+
+                if(result == 'err'){
+                    alert("无法获取机组UNIT");
+                    return;
+                }
+                $('.layui-table-click').eq(0).children('td').eq(7).children('div').text(result);
             }, "json");
         }
         else {
