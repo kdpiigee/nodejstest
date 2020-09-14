@@ -173,6 +173,7 @@ router.post('/loadData', function (req, loadRes) {
       var options = {
         host: stepRets.getconfig.pythonhost,
         path: stepRets.getconfig.pythonpath,
+        port:5000,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -192,13 +193,14 @@ router.post('/loadData', function (req, loadRes) {
   }, function (error, result) {
     if (!error) {
 
-      var conn = util.GetConn();
-      var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
-      conn.query(upSql, function (err, rows, result) {
-        if (err) throw done("error", err)
-        util.CloseConn(conn);
-        loadRes.json("手动更新中");
-      });
+      loadRes.json("手动更新中");
+      // var conn = util.GetConn();
+      // var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
+      // conn.query(upSql, function (err, rows, result) {
+      //   if (err) throw done("error", err)
+      //   util.CloseConn(conn);
+      //   loadRes.json("手动更新中");
+      // });
     }
   });
 
