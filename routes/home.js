@@ -173,7 +173,7 @@ router.post('/loadData', function (req, loadRes) {
       var options = {
         host: stepRets.getconfig.pythonhost,
         path: stepRets.getconfig.pythonpath,
-        port:5000,
+        //port:5000,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
