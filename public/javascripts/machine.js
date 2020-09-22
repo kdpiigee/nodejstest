@@ -119,14 +119,14 @@ function delMachineOK() {
     var epage = $('.layui-laypage-curr').eq(0).children('em').eq(1).text();
 
     var trs = $("[lay-id=jizuTable]").find('tbody').find('tr').length;
-    if(trs ==1 && epage > 1){
-        epage= epage-1;
+    if (trs == 1 && epage > 1) {
+        epage = epage - 1;
     }
     $.post("/delMachine", { "id": gRowData.id }, function (result) {
         gTable.reload('jizuTable', {
             page: {
                 curr: epage //重新从第 1 页开始
-                ,limit:elimit.substring(0, 2)
+                , limit: elimit.substring(0, 2)
             }
         });
         $('#delQuery').modal('hide');
@@ -141,13 +141,20 @@ function machineLoadData() {
         alert("未选择要进行数据迁移的机组信息");
         return;
     }
-
     if ($('.layui-table-click').length > 0) {
+        if (gRowData.status == "配置完成未取数据" ||
+            gRowData.status == "手动更新完成" ||
+            gRowData.status == "自动更新完成" ||
+            gRowData.status == "手动更新失败" ||
+            gRowData.status == "自动更新失败"
+        ) {
+            if (syncCheckHandUpdate() == "true") {
+                alert("同一时间只允许一个机组手动更新")
+                return;
+            }
+            $.post("/loadData", { "id": gRowData.id, "name": gRowData.name }, function (result) {
 
-        if (gRowData.status == "配置完成未取数据") {
-            $.post("/loadData", { "id": gRowData.id,"name":gRowData.name }, function (result) {
-
-                if(result == 'err'){
+                if (result == 'err') {
                     alert("无法获取机组UNIT");
                     return;
                 }
@@ -155,7 +162,8 @@ function machineLoadData() {
             }, "json");
         }
         else {
-            alert("数据已迁移");
+            alert("当前状态无法进行数据迁移操作");
+            return;
         }
     }
 }
@@ -174,22 +182,22 @@ function initMachineTable() {
             //,toolbar: '#toolbarDemo'
             , cols: [[
                 //{type:'radio'}
-                ,{field:'id',  title: 'ID',hide:true}
-                , { field: 'name', title: '机组名',width:200 }
-                , { field: 'host', title: '机组HOST',width:130  }
-                , { field: 'port', title: '机组Port' ,width:130 }
-                , { field: 'dbname', title: '数据库名',width:150  }
-                , { field: 'datastarttime', title: '数据开始时间',width:180  }
-                , { field: 'dataendtime', title: '数据结束时间',width:180  }
-                , { field: 'status', title: '状态',width:200  }
-                , { field: 'isautoupdate', title: '自动更新',width:120 , templet: '#chbAutoUp', unresize: true}
-                , { field: 'updateinterval', title: '更新频率',width:120 , templet: '#selUpInterval', unresize: true}
+                , { field: 'id', title: 'ID', hide: true }
+                , { field: 'name', title: '机组名', width: 200 }
+                , { field: 'host', title: '机组HOST', width: 130 }
+                , { field: 'port', title: '机组Port', width: 130 }
+                , { field: 'dbname', title: '数据库名', width: 150 }
+                , { field: 'datastarttime', title: '数据开始时间', width: 180 }
+                , { field: 'dataendtime', title: '数据结束时间', width: 180 }
+                , { field: 'status', title: '状态', width: 200 }
+                , { field: 'isautoupdate', title: '自动更新', width: 120, templet: '#chbAutoUp', unresize: true }
+                , { field: 'updateinterval', title: '更新频率', width: 120, templet: '#selUpInterval', unresize: true }
             ]]
             , page: true
         });
 
         //监听行单击事件
-        table.on('row(test)', function (obj) {        
+        table.on('row(test)', function (obj) {
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
             obj.tr.css("background-color", "#e5e5e5").siblings().css("background-color", "#FFFFFF");
             gRowData = obj.data;
@@ -198,12 +206,12 @@ function initMachineTable() {
         gTable.reload('jizuTable', {
             page: {
                 curr: 1 //重新从第 1 页开始
-                ,limit:10
+                , limit: 10
             }
         });
 
     });
-    
+
 };
 //图表数据初始化
 function initChart() {
@@ -381,3 +389,17 @@ function dataTimeCompare(flag, value) {
     }
     return true;
 };
+
+function syncCheckHandUpdate() {
+    //实例化XmlHttpRequest对象
+    var xhr = new XMLHttpRequest();
+    //使用GET方式请求指定网址的页面
+    xhr.open("GET", "/checkhandupdate", false);
+    //发送空内容请求
+    xhr.send(null);
+    if (xhr.status === 200) {//200状态码表示正常
+        return xhr.responseText;
+    } else {
+        return "err"
+    }
+}

@@ -5,19 +5,21 @@ var logutil = require('./log4jsutil');
 var http = require('http');
 const logger4js = logutil.getInstance().getLogger('webservice');
 
-var multer  = require('multer')
-var upload = multer({ dest: 'upload/',
-filename(req,file,cb){
-  cb(null,Date.now() + '-wsgi');
-}});
+var multer = require('multer')
+var upload = multer({
+  dest: 'upload/',
+  filename(req, file, cb) {
+    cb(null, Date.now() + '-wsgi');
+  }
+});
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('home');
 });
 
-router.post('/upload-single', upload.single('logo'), function(req, res, next){
-  res.send({ret_code: '0'});
+router.post('/upload-single', upload.single('logo'), function (req, res, next) {
+  res.send({ ret_code: '0' });
 });
 
 router.get('/upload', function (req, res, next) {
@@ -61,7 +63,7 @@ router.get('/getprocess', function (req, res, next) {
 //机组List数据取得
 router.get('/getMachines', function (req, res, next) {
 
-  var result = req.query; 
+  var result = req.query;
   var pPage = result.page;
   var pLimit = result.limit;
   var conn = util.GetConn();
@@ -78,10 +80,10 @@ router.get('/getMachines', function (req, res, next) {
     },
     selectData: function (done) {
       var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate  FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
-      if(pPage !== null && pPage !== undefined) {
-        sql="select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate "+ 
-        "FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit "+(pPage-1)*pLimit+","+pLimit;
-      } 
+      if (pPage !== null && pPage !== undefined) {
+        sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate " +
+          "FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit " + (pPage - 1) * pLimit + "," + pLimit;
+      }
       conn.query(sql, function (err, rows, fields) {
         if (err) {
           done('err', err);
@@ -92,15 +94,15 @@ router.get('/getMachines', function (req, res, next) {
   }, function (error, result) {
     if (!error) {
       util.CloseConn(conn);
-          var ret = {
-      "code": 0,
-      "msg": "",
-      "count": result.selectCount[0].count,
-      "data": result.selectData
+      var ret = {
+        "code": 0,
+        "msg": "",
+        "count": result.selectCount[0].count,
+        "data": result.selectData
+      }
+      res.json(ret);
     }
-    res.json(ret);
-    }
-    else{
+    else {
       util.CloseConn(conn);
       res.json("err");
     }
@@ -119,6 +121,21 @@ router.post('/delMachine', function (req, res) {
 
 });
 
+router.get('/checkhandupdate', function (req, res) {
+  console.log("---------id------" + req.body.id);
+  var conn = util.GetConn();
+  var sql = "SELECT * FROM `machine_master` WHERE `status` = 2";
+  conn.query(sql, function (err, rows, fields) {
+    if (err) throw err
+    util.CloseConn(conn);
+    if (rows.length > 0) {
+      res.json(true)
+    }
+    else {
+      res.json(false);
+    }
+  })
+})
 router.post('/loadData', function (req, loadRes) {
 
   var stepRets = {
@@ -127,7 +144,7 @@ router.post('/loadData', function (req, loadRes) {
   };
   var dc = require('./datacollection.js');
   var ret = dc.singleunit(req.body.name)
-  if(ret.length == 0){
+  if (ret.length == 0) {
     loadRes.json("err");
     loadRes.end();
     return;
