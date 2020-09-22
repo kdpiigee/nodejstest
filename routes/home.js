@@ -79,9 +79,9 @@ router.get('/getMachines', function (req, res, next) {
       })
     },
     selectData: function (done) {
-      var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate  FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
+      var sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate, A.updateinterval  FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit 0,10";
       if (pPage !== null && pPage !== undefined) {
-        sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate " +
+        sql = "select * from  (SELECT A.id,name ,host,port,dbname,datastarttime ,dataendtime,B.statuname as `status`,A.isautoupdate, A.updateinterval " +
           "FROM machine_master A,machine_status B where A.`status` = B.id ORDER BY id desc)  C limit " + (pPage - 1) * pLimit + "," + pLimit;
       }
       conn.query(sql, function (err, rows, fields) {
@@ -209,7 +209,6 @@ router.post('/loadData', function (req, loadRes) {
     }
   }, function (error, result) {
     if (!error) {
-
       loadRes.json("手动更新中");
       // var conn = util.GetConn();
       // var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
@@ -225,12 +224,13 @@ router.post('/loadData', function (req, loadRes) {
 
 router.post('/addMachine', function (req, res) {
   var moment = require('moment');
-  var userAddSql = 'INSERT INTO machine_master(name,host,port,dbname,datastarttime,dataendtime,modifytime,status) VALUES(?,?,?,?,?,?,?,1)';
-  var userAddSql_Params = [req.body["jizuName"], req.body["jizuURI"], req.body["jizuPort"], req.body["dbName"], req.body["dataStartTime"], req.body["dataEndTime"], moment().format("YYYY-MM-DD HH:mm:ss")];
+  var userAddSql = 'INSERT INTO machine_master(name,host,port,dbname,datastarttime,dataendtime,modifytime,status,isautoupdate) VALUES(?,?,?,?,?,?,?,1,?)';
+  var userAddSql_Params = [req.body["jizuName"], req.body["jizuURI"], req.body["jizuPort"], req.body["dbName"], req.body["dataStartTime"], req.body["dataEndTime"], moment().format("YYYY-MM-DD HH:mm:ss"),req.body["isautoupdate"]];
   var conn = util.GetConn();
   conn.query(userAddSql, userAddSql_Params, function (err, result) {
     if (err) {
       console.log('[INSERT ERROR] - ', err.message);
+      res.json('err');
       return;
     }
     util.CloseConn(conn);

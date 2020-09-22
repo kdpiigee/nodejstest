@@ -79,11 +79,16 @@ function submitAddRow() {
         "dataStartTime": dataStartTime,
         "dataEndTime": dataEndTime,
         "dbName": dbName,
-        "statu": 1
+        "statu": 1,
+        "isautoupdate": false
     };
 
     $.post("/addMachine", addInfo, function (result) {
         console.log("---server-return--" + result.id);
+        if (result.id == undefined) {
+            alert("数据插入失败");
+            return;
+        }
         gTable.reload('jizuTable', {
             page: {
                 curr: 1 //重新从第 1 页开始
@@ -172,7 +177,7 @@ function initMachineTable() {
 
     layui.use('table', function () {
         var table = layui.table;
-
+        var form = layui.form;
         table.render({
             elem: '#jizuTable'
             , url: '/getMachines'
@@ -195,7 +200,11 @@ function initMachineTable() {
             ]]
             , page: true
         });
-
+        //监听性别操作
+        form.on('checkbox(updatecheck)', function (obj) {
+            console.log(this.value);
+            //layer.tips(this.id + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
         //监听行单击事件
         table.on('row(test)', function (obj) {
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');

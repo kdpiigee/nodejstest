@@ -49,16 +49,16 @@
 <body style="width: 1920px;">
     <script type="text/html" id="chbAutoUp">
         <div>
-        <!-- 这里的 checked 的状态只是演示 -->
-    <input type="checkbox" name="isautoupdate" value="{{d.isautoupdate}}" title="开启" lay-filter="lockDemo" {{ d.isautoupdate == 'true' ? 'checked' : '' }} >
-      </div>
+            <!-- 这里的 checked 的状态只是演示 -->
+            <input type="checkbox"  value="{{d.id}}-{{d.name}}-{{d.host}}-{{d.port}}-{{d.dbname}}-{{d.status}}-{{d.updateinterval}}" title="开启" lay-filter="updatecheck" {{ d.isautoupdate == 'true' ? 'checked' : '' }} >
+        </div>
     </script>
     <script type="text/html" id="selUpInterval">
     <select name="updateinterval" lay-verify="required">      
-        <option value="0">天</option>
-        <option value="1">周</option>
-        <option value="2">月</option>
-      </select>
+        <option  selected={{ d.updateinterval == '天' ? 'selected' : '' }} value="0">天</option>
+        <option  selected={{ d.updateinterval == '周' ? 'selected' : '' }} value="1">周</option>
+        <option  selected={{ d.updateinterval == '月' ? 'selected' : '' }} value="2">月</option>
+    </select>
     </script>
     <div class="col-md-12">
 
