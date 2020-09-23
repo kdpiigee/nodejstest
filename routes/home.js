@@ -225,7 +225,7 @@ router.post('/loadData', function (req, loadRes) {
 router.post('/addMachine', function (req, res) {
   var moment = require('moment');
   var userAddSql = 'INSERT INTO machine_master(name,host,port,dbname,datastarttime,dataendtime,modifytime,status,isautoupdate) VALUES(?,?,?,?,?,?,?,1,?)';
-  var userAddSql_Params = [req.body["jizuName"], req.body["jizuURI"], req.body["jizuPort"], req.body["dbName"], req.body["dataStartTime"], req.body["dataEndTime"], moment().format("YYYY-MM-DD HH:mm:ss"),req.body["isautoupdate"]];
+  var userAddSql_Params = [req.body["jizuName"], req.body["jizuURI"], req.body["jizuPort"], req.body["dbName"], req.body["dataStartTime"], req.body["dataEndTime"], moment().format("YYYY-MM-DD HH:mm:ss"), req.body["isautoupdate"]];
   var conn = util.GetConn();
   conn.query(userAddSql, userAddSql_Params, function (err, result) {
     if (err) {
@@ -239,4 +239,23 @@ router.post('/addMachine', function (req, res) {
   });
 });
 
+
+
+router.post('/updateinterval', function (req, res) {
+
+  var updateSql = 'update machine_master set updateinterval = ? where id = ?';
+  var updateParams = [req.body["value"],req.body["id"]];
+  console.log("[value]--"+req.body["value"]+"[id]--"+req.body["id"])
+  var conn = util.GetConn();
+  conn.query(updateSql, updateParams, function (err, result) {
+    util.CloseConn(conn);
+    if (err) {
+      console.log('[UPDATE ERROR] ' + err.message)
+      res.json('err');
+    } else {
+      res.json('ok');
+    }
+  })
+
+});
 module.exports = router;

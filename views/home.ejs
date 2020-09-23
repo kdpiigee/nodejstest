@@ -50,14 +50,16 @@
     <script type="text/html" id="chbAutoUp">
         <div>
             <!-- 这里的 checked 的状态只是演示 -->
-            <input type="checkbox"  value="{{d.id}}-{{d.name}}-{{d.host}}-{{d.port}}-{{d.dbname}}-{{d.status}}-{{d.updateinterval}}" title="开启" lay-filter="updatecheck" {{ d.isautoupdate == 'true' ? 'checked' : '' }} >
+            <input type="checkbox" cusid="{{d.id}}"  cusname="{{d.name}}"  cushost="{{d.host}}" 
+            cusport="{{d.port}}"  cusdbname="{{d.dbname}}"  cusstatus="{{d.status}}"   cusupdateinterval="{{d.updateinterval}}" 
+              title="开启" lay-filter="updatecheck" {{ d.isautoupdate == 'true' ? 'checked' : '' }} >
         </div>
     </script>
     <script type="text/html" id="selUpInterval">
-    <select name="updateinterval" lay-verify="required">      
-        <option  selected={{ d.updateinterval == '天' ? 'selected' : '' }} value="0">天</option>
-        <option  selected={{ d.updateinterval == '周' ? 'selected' : '' }} value="1">周</option>
-        <option  selected={{ d.updateinterval == '月' ? 'selected' : '' }} value="2">月</option>
+    <select name="updateinterval" lay-filter="selectinterval" id="{{d.id}}">      
+        <option {{ d.updateinterval == '天' ? 'selected' : '' }} value="天">天</option>
+        <option {{ d.updateinterval == '周' ? 'selected' : '' }} value="周">周</option>
+        <option {{ d.updateinterval == '月' ? 'selected' : '' }} value="月">月</option>
     </select>
     </script>
     <div class="col-md-12">

@@ -200,10 +200,29 @@ function initMachineTable() {
             ]]
             , page: true
         });
-        //监听性别操作
+        //监听checkbox操作
         form.on('checkbox(updatecheck)', function (obj) {
-            console.log(this.value);
+            // console.log(obj.elem.attributes.cusid.nodeValue);
+            // console.log(obj.elem.attributes.cusname.nodeValue);
+            // console.log(obj.elem.attributes.cushost.nodeValue);
+            // console.log(obj.elem.attributes.cusport.nodeValue);
+            // console.log(obj.elem.attributes.cusdbname.nodeValue);
+            // console.log(obj.elem.attributes.cusstatus.nodeValue);
+            // console.log(obj.elem.attributes.cusupdateinterval.nodeValue);
+            console.log(obj.elem.checked);
+            //console.log(this.value);
             //layer.tips(this.id + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
+        //频率选择事件
+        form.on('select(selectinterval)', function (obj) {
+            console.log('----' + obj.elem.id);
+            console.log(obj.elem.value);
+            $.post("/updateinterval", { "id":  obj.elem.id, "value": obj.elem.value }, function (result) {
+                if (result == 'err') {
+                    alert("更新失败");
+                    return;
+                }
+            }, "json");
         });
         //监听行单击事件
         table.on('row(test)', function (obj) {
