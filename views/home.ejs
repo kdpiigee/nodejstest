@@ -56,7 +56,7 @@
         </div>
     </script>
     <script type="text/html" id="selUpInterval">
-    <select name="updateinterval" lay-filter="selectinterval" id="{{d.id}}">      
+    <select name="updateinterval" lay-filter="selectinterval" id="{{d.id}}" {{ d.isautoupdate == 'true' ? '' : 'disabled' }}>      
         <option {{ d.updateinterval == '天' ? 'selected' : '' }} value="天">天</option>
         <option {{ d.updateinterval == '周' ? 'selected' : '' }} value="周">周</option>
         <option {{ d.updateinterval == '月' ? 'selected' : '' }} value="月">月</option>

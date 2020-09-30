@@ -202,21 +202,32 @@ function initMachineTable() {
         });
         //监听checkbox操作
         form.on('checkbox(updatecheck)', function (obj) {
-            // console.log(obj.elem.attributes.cusid.nodeValue);
-            // console.log(obj.elem.attributes.cusname.nodeValue);
-            // console.log(obj.elem.attributes.cushost.nodeValue);
-            // console.log(obj.elem.attributes.cusport.nodeValue);
-            // console.log(obj.elem.attributes.cusdbname.nodeValue);
-            // console.log(obj.elem.attributes.cusstatus.nodeValue);
-            // console.log(obj.elem.attributes.cusupdateinterval.nodeValue);
             console.log(obj.elem.checked);
-            //console.log(this.value);
-            //layer.tips(this.id + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+            var data= {
+                "checked":obj.elem.checked,
+                "id":obj.elem.attributes.cusid.nodeValue,
+                "name":obj.elem.attributes.cusname.nodeValue,
+                "host":obj.elem.attributes.cushost.nodeValue,
+                "port":obj.elem.attributes.cusport.nodeValue,
+                "dbname":obj.elem.attributes.cusdbname.nodeValue,
+                "status":obj.elem.attributes.cusstatus.nodeValue,
+                "updateinterval":obj.elem.attributes.cusupdateinterval.nodeValue
+            }
+            $.post("/setautoupdate", data, function (result) {
+                if (result == 'err') {
+                    alert("更新失败");
+                    return;
+                }
+                console.log("update ok");
+                reloadtable();            
+              
+            }, "json");
         });
         //频率选择事件
         form.on('select(selectinterval)', function (obj) {
             console.log('----' + obj.elem.id);
             console.log(obj.elem.value);
+            
             $.post("/updateinterval", { "id":  obj.elem.id, "value": obj.elem.value }, function (result) {
                 if (result == 'err') {
                     alert("更新失败");
@@ -430,4 +441,18 @@ function syncCheckHandUpdate() {
     } else {
         return "err"
     }
+}
+
+function reloadtable(){
+
+    var elimit = $('.layui-laypage-limits').eq(0).children('select').find('option:selected').text();
+    var epage = $('.layui-laypage-curr').eq(0).children('em').eq(1).text();
+
+
+        gTable.reload('jizuTable', {
+            page: {
+                curr: epage //重新从第 1 页开始
+                , limit: elimit.substring(0, 2)
+            }
+        });
 }

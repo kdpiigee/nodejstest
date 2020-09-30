@@ -210,13 +210,6 @@ router.post('/loadData', function (req, loadRes) {
   }, function (error, result) {
     if (!error) {
       loadRes.json("手动更新中");
-      // var conn = util.GetConn();
-      // var upSql = "update machine_master set `status` = 2 where id = " + req.body.id;
-      // conn.query(upSql, function (err, rows, result) {
-      //   if (err) throw done("error", err)
-      //   util.CloseConn(conn);
-      //   loadRes.json("手动更新中");
-      // });
     }
   });
 
@@ -239,13 +232,27 @@ router.post('/addMachine', function (req, res) {
   });
 });
 
+router.post('/setautoupdate', function (req, res) {
+  var updateSql = 'update machine_master set isautoupdate = ? where id = ?';
+  var updateParams = [req.body["checked"], req.body["id"]];
+  console.log("[value]--" + req.body["value"] + "[id]--" + req.body["id"])
+  var conn = util.GetConn();
+  conn.query(updateSql, updateParams, function (err, result) {
+    util.CloseConn(conn);
+    if (err) {
+      console.log('[UPDATE ERROR] ' + err.message)
+      res.json('err');
+    } else {
+      res.json('ok');
+    }
+  })
+});
 
 
 router.post('/updateinterval', function (req, res) {
-
   var updateSql = 'update machine_master set updateinterval = ? where id = ?';
-  var updateParams = [req.body["value"],req.body["id"]];
-  console.log("[value]--"+req.body["value"]+"[id]--"+req.body["id"])
+  var updateParams = [req.body["value"], req.body["id"]];
+  console.log("[value]--" + req.body["value"] + "[id]--" + req.body["id"])
   var conn = util.GetConn();
   conn.query(updateSql, updateParams, function (err, result) {
     util.CloseConn(conn);
