@@ -11,6 +11,12 @@ var schedules = {
   "month": null
 }
 exports.regschedule = function () {
+
+  logger4js.info('start regist schedule');
+  schedule.scheduleJob('10 56 * * * *', function () {
+    logger4js.info('test schedule start' + new Date());
+    console.log('test schedule start:' + new Date());
+  });
   schedules.day = schedule.scheduleJob('10 0 0 * * *', function () {
     logger4js.info('schedule start day:' + new Date());
     console.log('schedule start day:' + new Date());
