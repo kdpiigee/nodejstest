@@ -13,7 +13,7 @@ var schedules = {
 exports.regschedule = function () {
 
   logger4js.info('start regist schedule');
-  schedule.scheduleJob('10 56 * * * *', function () {
+  schedule.scheduleJob('10 2 * * * *', function () {
     logger4js.info('test schedule start' + new Date());
     console.log('test schedule start:' + new Date());
   });
